@@ -109,7 +109,7 @@ p {
 }
 
 /* --- GLASSMORPHIC & PREMIUM COMPONENTS --- */
-.glass-panel {
+.glass-panel, .glass-card {
   background-color: var(--bg-glass);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -120,7 +120,6 @@ p {
 }
 
 .glass-card {
-  composes: glass-panel;
   padding: 24px;
 }
 
