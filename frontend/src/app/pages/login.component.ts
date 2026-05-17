@@ -24,6 +24,14 @@ import { AuthService } from '../services/auth.service';
           {{ errorMessage }}
         </div>
 
+        <!-- Info / Helper Alert -->
+        <div *ngIf="infoMessage" class="info-alert" 
+             [style.border-color]="infoType === 'warning' ? 'var(--warning)' : 'var(--primary)'" 
+             style="margin-bottom: 24px; padding: 16px; background-color: rgba(255, 255, 255, 0.02); border: 1px solid; border-radius: var(--radius-sm); font-size: 0.88rem; line-height: 1.5; color: var(--text-muted); position: relative;">
+          <p>{{ infoMessage }}</p>
+          <button (click)="clearInfo()" style="position: absolute; top: 6px; right: 10px; background: none; border: none; cursor: pointer; color: var(--text-dim); font-size: 1.2rem;">×</button>
+        </div>
+
         <!-- Form -->
         <form (ngSubmit)="onSubmit()">
           
@@ -39,7 +47,7 @@ import { AuthService } from '../services/auth.service';
               required>
           </div>
 
-          <div class="form-group" style="margin-bottom: 32px;">
+          <div class="form-group" style="margin-bottom: 24px;">
             <label class="form-label" for="password">Şifre</label>
             <input 
               type="password" 
@@ -60,28 +68,69 @@ import { AuthService } from '../services/auth.service';
             {{ isSubmitting ? 'Giriş Yapılıyor...' : 'Giriş Yap' }}
           </button>
 
+          <!-- Forgot Password & Register Buttons -->
+          <div style="margin-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
+            <a (click)="onForgotPassword($event)" href="#" class="form-link" style="color: var(--text-dim); transition: color var(--transition-fast);">
+              Şifremi Unuttum
+            </a>
+            <a (click)="onRegister($event)" href="#" class="form-link" style="color: var(--primary); font-weight: 500; transition: color var(--transition-fast);">
+              Kayıt Ol
+            </a>
+          </div>
+
         </form>
 
       </div>
     </div>
   `,
   styles: [`
+    .error-alert, .info-alert {
+      animation: fadeIn 0.3s ease-in-out;
+    }
     .error-alert {
       animation: shake 0.3s ease-in-out;
+    }
+    .form-link:hover {
+      color: var(--primary) !important;
+      text-decoration: underline;
     }
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-4px); }
       75% { transform: translateX(4px); }
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   `]
 })
 export class LoginComponent {
   public credentials = { username: '', password: '' };
   public errorMessage = '';
+  public infoMessage = '';
+  public infoType = 'info'; // 'info' or 'warning'
   public isSubmitting = false;
 
   constructor(private auth: AuthService, private router: Router) {}
+
+  public onForgotPassword(event: Event): void {
+    event.preventDefault();
+    this.errorMessage = '';
+    this.infoType = 'warning';
+    this.infoMessage = '🔒 Siber güvenlik önlemleri gereği, şifre sıfırlama talepleri dış ağlara kapatılmıştır. Şifrenizi sıfırlamak için lütfen yerel veritabanı yönetim panelini kullanın veya sistem yöneticinizle iletişime geçin.';
+  }
+
+  public onRegister(event: Event): void {
+    event.preventDefault();
+    this.errorMessage = '';
+    this.infoType = 'info';
+    this.infoMessage = '🛡️ Bu blog sistemi kişisel bir siber güvenlik kütüphanesidir. Üye alımı dışarıya kapalıdır. Yeni yönetici hesabı eklemek için terminalinizde "python manage.py createsuperuser" komutunu koşturun.';
+  }
+
+  public clearInfo(): void {
+    this.infoMessage = '';
+  }
 
   public onSubmit(): void {
     if (!this.credentials.username || !this.credentials.password) {
@@ -91,6 +140,7 @@ export class LoginComponent {
 
     this.isSubmitting = true;
     this.errorMessage = '';
+    this.clearInfo();
 
     this.auth.login(this.credentials).subscribe({
       next: () => {
