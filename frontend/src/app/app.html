@@ -1,0 +1,77 @@
+<header class="glass-header">
+  <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+    <a routerLink="/" class="logo" style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+      <span style="color: var(--primary); font-family: monospace;">&lt;</span>
+      Göktyğ Efe
+      <span style="color: var(--primary); font-family: monospace;">/&gt;</span>
+    </a>
+    
+    <nav style="display: flex; align-items: center; gap: 28px;">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Ana Sayfa</a>
+      <a routerLink="/hakkimda" routerLinkActive="active" class="nav-link">Hakkımda</a>
+      <a routerLink="/blog" routerLinkActive="active" class="nav-link">Blog</a>
+      
+      @if (authService.isAuthenticated()) {
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" style="color: var(--primary); font-weight: 500;">Yönetim Paneli</a>
+        <button (click)="onLogout()" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.4); color: hsl(0, 84%, 70%);">Çıkış</button>
+      } @else {
+        <a routerLink="/login" routerLinkActive="active" class="nav-link nav-admin-link">Giriş</a>
+      }
+    </nav>
+  </div>
+</header>
+
+<main style="padding: 40px 0 80px 0;">
+  <router-outlet></router-outlet>
+</main>
+
+<footer style="border-top: 1px solid var(--border-glass); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.9rem;">
+  <div class="container">
+    <p style="font-weight: 300;">&copy; 2026 Göktuğ Efe Madran. Konak Kavram Meslek Yüksekokulu - Siber Güvenlik Teknolojileri. Tüm Hakları Saklıdır.</p>
+  </div>
+</footer>
+
+<style>
+  .nav-link {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    position: relative;
+    padding: 6px 0;
+  }
+  
+  .nav-link:hover, .nav-link.active {
+    color: var(--text-main);
+  }
+  
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary);
+    transition: width var(--transition-fast);
+  }
+  
+  .nav-link:hover::after, .nav-link.active::after {
+    width: 100%;
+  }
+
+  .nav-admin-link {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-glass);
+    padding: 6px 14px !important;
+    border-radius: var(--radius-sm);
+  }
+
+  .nav-admin-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary);
+  }
+  
+  .nav-admin-link::after {
+    display: none;
+  }
+</style>

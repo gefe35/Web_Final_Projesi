@@ -1,0 +1,39 @@
+# System Files
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+
+# Python / Django
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.env
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Node.js / Angular
+node_modules/
+/dist/
+/.angular/
+.npm
+.yarn-integrity
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# IDEs
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
