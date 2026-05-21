@@ -131,7 +131,7 @@ import { ApiService, AboutMe } from '../services/api.service';
         </div>
 
         <!-- Tech Badges -->
-        <div class="glass-panel" style="padding: 32px; margin-bottom: 40px;">
+        <div class="glass-panel" style="padding: 32px; margin-bottom: 80px;">
           <h3 style="font-size: 1.1rem; margin-bottom: 24px; text-align: center;">Teknoloji Yığını</h3>
           <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
             <span class="skill-badge security">Kali Linux</span>
@@ -149,6 +149,42 @@ import { ApiService, AboutMe } from '../services/api.service';
             <span class="skill-badge framework">PostgreSQL</span>
             <span class="skill-badge framework">Git / GitHub</span>
             <span class="skill-badge framework">Android Studio</span>
+          </div>
+        </div>
+
+        <!-- Certifications & Goals -->
+        <h2 style="margin-bottom: 16px; text-align: center;">Sertifikasyon Yolculuğu</h2>
+        <p style="text-align: center; margin-bottom: 40px; color: var(--text-muted);">Kariyer hedeflerim doğrultusunda edinmeyi planladığım sertifikalar.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 16px; max-width: 700px; margin: 0 auto 80px;">
+          <div class="cert-card" *ngFor="let cert of certifications">
+            <div class="cert-icon">{{ cert.icon }}</div>
+            <div>
+              <div style="margin-bottom: 6px;">
+                <span class="cert-status" [class]="cert.status">{{ cert.statusLabel }}</span>
+              </div>
+              <h3 style="font-size: 1.1rem; margin-bottom: 6px;">{{ cert.name }}</h3>
+              <p style="font-size: 0.9rem; margin: 0; line-height: 1.6;">{{ cert.desc }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact CTA -->
+        <div class="contact-cta-section">
+          <span class="badge badge-primary" style="margin-bottom: 16px;">İletişim</span>
+          <h2 style="margin-bottom: 12px;">Birlikte Çalışalım</h2>
+          <p style="max-width: 480px; margin: 0 auto 28px;">
+            Siber güvenlik projeleri, web geliştirme veya teknik sorular için iletişime geçmekten çekinme.
+          </p>
+          <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+            <a href="mailto:gefemadran@icloud.com" class="btn btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="margin-right:8px;"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              E-posta Gönder
+            </a>
+            <a href="https://github.com/gefe35" target="_blank" class="btn btn-secondary">
+              <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right:8px;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+              GitHub Profilim
+            </a>
           </div>
         </div>
 
@@ -233,6 +269,37 @@ import { ApiService, AboutMe } from '../services/api.service';
 })
 export class AboutComponent implements OnInit {
   public aboutInfo: AboutMe | null = null;
+
+  public certifications = [
+    {
+      name: 'CompTIA Security+',
+      status: 'hedef',
+      statusLabel: 'Kısa Vadeli Hedef',
+      icon: '🎯',
+      desc: 'Ağ güvenliği, kriptografi, tehdit yönetimi ve uyumluluk konularını kapsayan uluslararası temel güvenlik sertifikasyonu.'
+    },
+    {
+      name: 'Certified Ethical Hacker (CEH)',
+      status: 'hedef',
+      statusLabel: 'Orta Vadeli Hedef',
+      icon: '🛡️',
+      desc: 'EC-Council tarafından verilen etik hacker sertifikasyonu. Sızma testi metodolojileri ve zafiyet keşfi odaklı.'
+    },
+    {
+      name: 'OSCP (Offensive Security Certified Professional)',
+      status: 'uzun-vadeli',
+      statusLabel: 'Uzun Vadeli Hedef',
+      icon: '🔭',
+      desc: 'Sektörün en prestijli sızma testi sertifikası. Gerçek dünya senaryolarında manuel exploit geliştirme ve zafiyet istismarı.'
+    },
+    {
+      name: 'Wireshark Certified Network Analyst (WCNA)',
+      status: 'hedef',
+      statusLabel: 'Kısa Vadeli Hedef',
+      icon: '📡',
+      desc: 'Ağ protokol analizi ve paket yakalama alanında uzmanlaşmak için Wireshark sertifikasyonu.'
+    },
+  ];
 
   public securitySkills = [
     { name: 'Nmap / Ağ Tarama', level: 80 },

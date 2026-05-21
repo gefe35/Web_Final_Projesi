@@ -7,6 +7,7 @@ import { LoginComponent } from './pages/login.component';
 import { RegisterComponent } from './pages/register.component';
 import { DashboardComponent } from './pages/dashboard.component';
 import { ProjectsComponent } from './pages/projects.component';
+import { TerminalComponent } from './pages/terminal.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -17,5 +18,7 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'projeler', component: ProjectsComponent },
+  { path: 'terminal', component: TerminalComponent },
   { path: '**', redirectTo: '' } // Fallback to Home
 ];
+

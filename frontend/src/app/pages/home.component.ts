@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, AboutMe, ContentItem } from '../services/api.service';
 import { GithubService, GithubRepo } from '../services/github.service';
@@ -21,6 +21,64 @@ const CUSTOM_DESCRIPTIONS: Record<string, string> = {
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  HERO SECTION                                    -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <section class="hero-section">
+      <div class="hero-grid-bg"></div>
+      <div class="container hero-inner">
+
+        <div class="hero-badge">
+          <span class="hero-status-dot"></span>
+          <code>root&#64;gefe35:~$</code>
+          <span style="opacity:.5; margin-left: 4px;">_</span>
+        </div>
+
+        <h1 class="hero-title">
+          Göktuğ Efe <span class="text-gradient">Madran</span>
+        </h1>
+
+        <div class="hero-subtitle-row">
+          <span class="hero-role-text">{{ typingText }}</span><span class="hero-cursor" [class.blink]="isCursorVisible">|</span>
+        </div>
+
+        <p class="hero-bio">
+          İzmir'de Siber Güvenlik Teknolojileri öğrencisi. Ağ analizi, sızma testleri
+          ve güvenli Full-Stack geliştirme üzerine çalışıyorum.
+        </p>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="stat-num">{{ totalRepos || 7 }}</span>
+            <span class="stat-label">GitHub Repo</span>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="hero-stat">
+            <span class="stat-num">{{ totalPosts || 6 }}</span>
+            <span class="stat-label">Blog Yazısı</span>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="hero-stat">
+            <span class="stat-num">5+</span>
+            <span class="stat-label">Güvenlik Aracı</span>
+          </div>
+        </div>
+
+        <div class="hero-cta">
+          <a routerLink="/projeler" class="btn btn-primary">Projelerimi Gör</a>
+          <a routerLink="/terminal" class="btn btn-secondary hero-terminal-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+            Terminal'i Dene
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!--  BLOG LAYOUT                                     -->
+    <!-- ═══════════════════════════════════════════════ -->
     <div class="container blog-layout" *ngIf="aboutInfo">
       
       <!-- Main Content Area: Posts -->
@@ -144,26 +202,48 @@ const CUSTOM_DESCRIPTIONS: Record<string, string> = {
   `,
   styles: []
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   public aboutInfo: AboutMe | null = null;
   public recentItems: ContentItem[] = [];
   public featuredRepos: FeaturedRepo[] = [];
+  public totalRepos = 0;
+  public totalPosts = 0;
+
+  // Typing animation
+  public typingText = '';
+  public isCursorVisible = true;
+  private readonly roles = [
+    'Siber Güvenlik Araştırmacısı',
+    'Full-Stack Geliştirici',
+    'CTF Meraklısı',
+    'Network Analisti',
+  ];
+  private roleIdx = 0;
+  private charIdx = 0;
+  private isDeleting = false;
+  private typingTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private api: ApiService, private github: GithubService) {}
 
   ngOnInit(): void {
+    this.startTyping();
+
     this.api.getAboutMe().subscribe({
       next: (res) => this.aboutInfo = res,
-      error: (err) => console.error("About me fetch error:", err)
+      error: (err) => console.error('About me fetch error:', err)
     });
 
     this.api.getItems().subscribe({
-      next: (res) => this.recentItems = res.slice(0, 3),
-      error: (err) => console.error("Items fetch error:", err)
+      next: (res) => {
+        this.totalPosts = res.length;
+        this.recentItems = res.slice(0, 3);
+      },
+      error: (err) => console.error('Items fetch error:', err)
     });
 
     this.github.getRepositories().subscribe({
       next: (repos) => {
+        this.totalRepos = repos.length;
         this.featuredRepos = repos.slice(0, 3).map(r => ({
           ...r,
           customDesc: CUSTOM_DESCRIPTIONS[r.name]
@@ -171,6 +251,31 @@ export class HomeComponent implements OnInit {
       },
       error: () => {}
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.typingTimer) clearTimeout(this.typingTimer);
+  }
+
+  private startTyping(): void {
+    const fullText = this.roles[this.roleIdx];
+    if (!this.isDeleting) {
+      this.typingText = fullText.slice(0, this.charIdx + 1);
+      this.charIdx++;
+      if (this.charIdx === fullText.length) {
+        this.isDeleting = true;
+        this.typingTimer = setTimeout(() => this.startTyping(), 2200);
+        return;
+      }
+    } else {
+      this.typingText = fullText.slice(0, this.charIdx - 1);
+      this.charIdx--;
+      if (this.charIdx === 0) {
+        this.isDeleting = false;
+        this.roleIdx = (this.roleIdx + 1) % this.roles.length;
+      }
+    }
+    this.typingTimer = setTimeout(() => this.startTyping(), this.isDeleting ? 55 : 85);
   }
 
   public getInitials(name: string): string {
