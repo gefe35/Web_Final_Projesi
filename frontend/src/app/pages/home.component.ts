@@ -1,20 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { ApiService, AboutMe, ContentItem } from '../services/api.service';
-import { GithubService, GithubRepo } from '../services/github.service';
+import { ApiService, AboutMe, ContentItem, Project } from '../services/api.service';
 import { CommonModule } from '@angular/common';
-
-interface FeaturedRepo extends GithubRepo {
-  customDesc?: string;
-}
-
-const CUSTOM_DESCRIPTIONS: Record<string, string> = {
-  'VpnApp_Demo-': 'C# ile geliştirilen, temel VPN tünelleme mantığını gösteren demo masaüstü uygulaması.',
-  'Otomatikmesajgonderici': 'Python ile yazılmış, belirli aralıklarla otomatik mesaj gönderimini sağlayan otomasyon aracı.',
-  'HesapMakinesi': 'Android Studio ortamında Java ile geliştirilen temel dört işlem yapabilen mobil hesap makinesi.',
-  'Csharp-Kalp_Yapimi': 'C# konsol uygulaması ile ASCII sanatı kullanılarak çizilen kalp animasyonu.',
-  'WebProgramlamaDersi': 'Web Programlama dersi kapsamında hazırlanan; HTML, CSS ve JavaScript örneklerini içeren ders repom.',
-};
 
 @Component({
   selector: 'app-home',
@@ -180,17 +167,16 @@ const CUSTOM_DESCRIPTIONS: Record<string, string> = {
         <!-- Featured Project Widget -->
         <div class="glass-panel" style="padding: 28px;">
           <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 20px;">
-            Öne Çıkan Proje
+            Öne Çıkan Projeler
           </h4>
-          <div *ngFor="let repo of featuredRepos" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-glass);">
+          <div *ngFor="let project of featuredProjects" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-glass);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-weight: 600; color: var(--text-main); font-size: 0.95rem;">{{ repo.name }}</span>
-              <a [href]="repo.html_url" target="_blank" style="color: var(--primary); font-size: 0.75rem;">GitHub →</a>
+              <span style="font-weight: 600; color: var(--text-main); font-size: 0.95rem;">{{ project.name }}</span>
+              <a *ngIf="project.github_url" [href]="project.github_url" target="_blank" style="color: var(--primary); font-size: 0.75rem;">GitHub →</a>
             </div>
-            <p style="font-size: 0.85rem; margin-bottom: 10px; line-height: 1.5;">{{ repo.customDesc || repo.description || 'Proje açıklaması mevcut değil.' }}</p>
+            <p style="font-size: 0.85rem; margin-bottom: 10px; line-height: 1.5;">{{ project.description || 'Proje açıklaması mevcut değil.' }}</p>
             <div style="display: flex; gap: 10px; align-items: center;">
-              <span *ngIf="repo.language" class="skill-badge" style="font-size: 0.72rem;">{{ repo.language }}</span>
-              <span style="font-size: 0.75rem; color: var(--text-dim);">⭐ {{ repo.stargazers_count }}</span>
+              <span *ngIf="project.language" class="skill-badge" style="font-size: 0.72rem;">{{ project.language }}</span>
             </div>
           </div>
           <a routerLink="/projeler" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.88rem;">Tüm Projeleri Gör →</a>
@@ -205,7 +191,7 @@ const CUSTOM_DESCRIPTIONS: Record<string, string> = {
 export class HomeComponent implements OnInit, OnDestroy {
   public aboutInfo: AboutMe | null = null;
   public recentItems: ContentItem[] = [];
-  public featuredRepos: FeaturedRepo[] = [];
+  public featuredProjects: Project[] = [];
   public totalRepos = 0;
   public totalPosts = 0;
 
@@ -223,7 +209,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private isDeleting = false;
   private typingTimer: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private api: ApiService, private github: GithubService) {}
+  constructor(private api: ApiService) {}
 
   ngOnInit(): void {
     this.startTyping();
@@ -241,13 +227,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       error: (err) => console.error('Items fetch error:', err)
     });
 
-    this.github.getRepositories().subscribe({
-      next: (repos) => {
-        this.totalRepos = repos.length;
-        this.featuredRepos = repos.slice(0, 3).map(r => ({
-          ...r,
-          customDesc: CUSTOM_DESCRIPTIONS[r.name]
-        }));
+    this.api.getProjects().subscribe({
+      next: (projects) => {
+        this.totalRepos = projects.length;
+        this.featuredProjects = projects.slice(0, 3);
       },
       error: () => {}
     });

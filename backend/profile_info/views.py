@@ -1,35 +1,28 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
-from django.contrib.auth.models import User
-from .models import AboutMe
-from .serializers import AboutMeSerializer, RegisterSerializer
+from .models import AboutMe, Project
+from .serializers import AboutMeSerializer, ProjectSerializer
 from drf_spectacular.utils import extend_schema
 
-class RegisterView(APIView):
+
+class ProjectListView(APIView):
     permission_classes = [AllowAny]
 
     @extend_schema(
-        operation_id="register_user",
-        summary="Yeni kullanıcı kaydı oluştur",
-        description="Dışarıdan kullanıcı kayıt olmak için kullanılır. Şifre eşleşmesi ve validasyon içerir.",
-        request=RegisterSerializer,
-        responses={201: RegisterSerializer}
+        operation_id="list_projects",
+        summary="Proje listesini getir",
+        responses={200: ProjectSerializer(many=True)}
     )
-    def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response({
-                "message": "Kullanıcı başarıyla oluşturuldu.",
-                "username": user.username
-            }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request):
+        projects = Project.objects.filter(is_active=True)
+        return Response(ProjectSerializer(projects, many=True).data)
+
 
 class AboutMeView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
     parser_classes = [MultiPartParser, FormParser]
 
     def get_object(self):

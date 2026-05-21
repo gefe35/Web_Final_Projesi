@@ -1,20 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GithubService, GithubRepo } from '../services/github.service';
-
-interface EnrichedRepo extends GithubRepo {
-  customDesc?: string;
-}
-
-const REPO_DESCRIPTIONS: Record<string, string> = {
-  'VpnApp_Demo-': 'C# ile geliştirilen, temel VPN tünelleme mantığını gösteren demo masaüstü uygulaması.',
-  'Otomatikmesajgonderici': 'Python ile yazılmış, belirli aralıklarla otomatik mesaj gönderimini sağlayan otomasyon aracı.',
-  'HesapMakinesi': 'Android Studio ortamında Java ile geliştirilen temel dört işlem yapabilen mobil hesap makinesi.',
-  'Csharp-Kalp_Yapimi': 'C# konsol uygulaması ile ASCII sanatı kullanılarak çizilen kalp animasyonu.',
-  'WebProgramlamaDersi': 'Web Programlama dersi kapsamında hazırlanan; HTML, CSS ve JavaScript örneklerini içeren ders repom.',
-  'QuizMoba': 'C# ile geliştirilen, kullanıcılara eğlenceli sorular yönelten mobil quiz uygulaması.',
-  'netManeger': 'JavaScript ile yazılmış, ağ yönetimi ve bağlantı takibine yönelik araç.',
-};
+import { ApiService, Project } from '../services/api.service';
 
 @Component({
   selector: 'app-projects',
@@ -24,9 +10,9 @@ const REPO_DESCRIPTIONS: Record<string, string> = {
     <div class="container" style="padding-top: 40px; min-height: 70vh;">
 
       <div style="text-align: center; margin-bottom: 48px;">
-        <span class="badge badge-primary" style="margin-bottom: 12px;">GitHub Repolarım</span>
+        <span class="badge badge-primary" style="margin-bottom: 12px;">Yazılım Projelerim</span>
         <h1 class="text-gradient" style="margin-bottom: 16px;">Projelerim</h1>
-        <p style="max-width: 620px; margin: 0 auto;">GitHub üzerinde geliştirdiğim yazılım projeleri, araştırmalarım ve eğitim amaçlı repolar — canlı olarak çekilmektedir.</p>
+        <p style="max-width: 620px; margin: 0 auto;">Geliştirdiğim yazılım projeleri, araştırmalar ve eğitim amaçlı repolar.</p>
       </div>
 
       <!-- Language Filter -->
@@ -54,7 +40,7 @@ const REPO_DESCRIPTIONS: Record<string, string> = {
 
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
             <h3 style="margin: 0; font-size: 1.3rem; color: var(--primary);">{{ repo.name }}</h3>
-            <a [href]="repo.html_url" target="_blank" rel="noopener noreferrer" style="color: var(--text-dim); transition: color var(--transition-fast); flex-shrink: 0; margin-left: 8px;" title="GitHub'da Görüntüle">
+            <a [href]="repo.github_url" target="_blank" rel="noopener noreferrer" style="color: var(--text-dim); transition: color var(--transition-fast); flex-shrink: 0; margin-left: 8px;" title="GitHub'da Görüntüle">
               <svg height="22" width="22" viewBox="0 0 16 16" fill="currentColor">
                 <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
               </svg>
@@ -62,7 +48,7 @@ const REPO_DESCRIPTIONS: Record<string, string> = {
           </div>
 
           <p style="flex-grow: 1; margin-bottom: 24px; font-size: 0.95rem; line-height: 1.6; color: var(--text-muted);">
-            {{ repo.customDesc || repo.description || 'Bu proje için henüz bir açıklama girilmemiş.' }}
+            {{ repo.description || 'Bu proje için henüz bir açıklama girilmemiş.' }}
           </p>
 
           <div style="display: flex; gap: 16px; font-size: 0.85rem; color: var(--text-dim); align-items: center; border-top: 1px solid var(--border-glass); padding-top: 16px; flex-wrap: wrap;">
@@ -70,8 +56,8 @@ const REPO_DESCRIPTIONS: Record<string, string> = {
               <span class="lang-dot" [class]="repo.language.toLowerCase()"></span>
               {{ repo.language }}
             </div>
-            <div style="display: flex; align-items: center; gap: 4px;">⭐ {{ repo.stargazers_count }}</div>
-            <div style="display: flex; align-items: center; gap: 4px;">🍴 {{ repo.forks_count }}</div>
+            <div style="display: flex; align-items: center; gap: 4px;">⭐ {{ repo.stars }}</div>
+            <div style="display: flex; align-items: center; gap: 4px;">🍴 {{ repo.forks }}</div>
             <div style="margin-left: auto;">{{ repo.updated_at | date:'dd.MM.yyyy' }}</div>
           </div>
 
@@ -119,26 +105,25 @@ const REPO_DESCRIPTIONS: Record<string, string> = {
   `]
 })
 export class ProjectsComponent implements OnInit {
-  public repos: EnrichedRepo[] = [];
-  public filteredRepos: EnrichedRepo[] = [];
+  public repos: Project[] = [];
+  public filteredRepos: Project[] = [];
   public languages: string[] = [];
   public activeFilter = '';
   public isLoading = true;
   public errorMessage = '';
 
-  constructor(private githubService: GithubService) {}
+  constructor(private api: ApiService) {}
 
   ngOnInit(): void {
-    this.githubService.getRepositories().subscribe({
+    this.api.getProjects().subscribe({
       next: (data) => {
-        this.repos = data.map(r => ({ ...r, customDesc: REPO_DESCRIPTIONS[r.name] }));
-        this.filteredRepos = this.repos;
+        this.repos = data;
+        this.filteredRepos = data;
         this.languages = [...new Set(data.map(r => r.language).filter(Boolean))];
         this.isLoading = false;
       },
-      error: (err) => {
-        console.error('GitHub API error:', err);
-        this.errorMessage = 'Projeler yüklenirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.';
+      error: () => {
+        this.errorMessage = 'Projeler yüklenirken bir sorun oluştu.';
         this.isLoading = false;
       }
     });
