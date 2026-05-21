@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { ApiService, AboutMe } from '../services/api.service';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule],
   template: `
     <div class="container" *ngIf="aboutInfo">
       <section style="max-width: 900px; margin: 0 auto;">
@@ -56,7 +55,7 @@ import { ApiService, AboutMe } from '../services/api.service';
         <!-- Academic & Professional Timeline -->
         <h2 style="margin-bottom: 40px; text-align: center;">Eğitim & Kariyer Yolculuğu</h2>
         <div class="timeline-container">
-          
+
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="glass-card timeline-card">
@@ -93,6 +92,64 @@ import { ApiService, AboutMe } from '../services/api.service';
             </div>
           </div>
 
+        </div>
+
+        <!-- Skills & Proficiency -->
+        <h2 style="margin-bottom: 16px; text-align: center; margin-top: 80px;">Yetkinlikler & Araçlar</h2>
+        <p style="text-align: center; margin-bottom: 48px; color: var(--text-muted);">Aktif olarak kullandığım teknolojiler ve tahmini yetkinlik düzeylerim.</p>
+
+        <div class="grid-2" style="align-items: start; margin-bottom: 80px;">
+
+          <!-- Security Tools -->
+          <div class="glass-panel" style="padding: 32px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 28px; color: var(--primary);">Siber Güvenlik Araçları</h3>
+            <div *ngFor="let skill of securitySkills" class="skill-bar-item">
+              <div class="skill-bar-meta">
+                <span>{{ skill.name }}</span>
+                <span>{{ skill.level }}%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" [style.--fill-width]="skill.level + '%'"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Programming -->
+          <div class="glass-panel" style="padding: 32px;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 28px; color: var(--primary);">Programlama & Geliştirme</h3>
+            <div *ngFor="let skill of devSkills" class="skill-bar-item">
+              <div class="skill-bar-meta">
+                <span>{{ skill.name }}</span>
+                <span>{{ skill.level }}%</span>
+              </div>
+              <div class="skill-bar-track">
+                <div class="skill-bar-fill" [style.--fill-width]="skill.level + '%'"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Tech Badges -->
+        <div class="glass-panel" style="padding: 32px; margin-bottom: 40px;">
+          <h3 style="font-size: 1.1rem; margin-bottom: 24px; text-align: center;">Teknoloji Yığını</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+            <span class="skill-badge security">Kali Linux</span>
+            <span class="skill-badge security">Nmap</span>
+            <span class="skill-badge security">Wireshark</span>
+            <span class="skill-badge security">Metasploit</span>
+            <span class="skill-badge security">Burp Suite</span>
+            <span class="skill-badge language">Python</span>
+            <span class="skill-badge language">C#</span>
+            <span class="skill-badge language">TypeScript</span>
+            <span class="skill-badge language">JavaScript</span>
+            <span class="skill-badge language">HTML5 / CSS3</span>
+            <span class="skill-badge framework">Angular</span>
+            <span class="skill-badge framework">Django REST</span>
+            <span class="skill-badge framework">PostgreSQL</span>
+            <span class="skill-badge framework">Git / GitHub</span>
+            <span class="skill-badge framework">Android Studio</span>
+          </div>
         </div>
 
       </section>
@@ -176,6 +233,22 @@ import { ApiService, AboutMe } from '../services/api.service';
 })
 export class AboutComponent implements OnInit {
   public aboutInfo: AboutMe | null = null;
+
+  public securitySkills = [
+    { name: 'Nmap / Ağ Tarama', level: 80 },
+    { name: 'Wireshark / Paket Analizi', level: 75 },
+    { name: 'Metasploit', level: 65 },
+    { name: 'Burp Suite / Web Güvenliği', level: 70 },
+    { name: 'Kriptoloji & Sıfır Bilgi Kanıtı', level: 60 },
+  ];
+
+  public devSkills = [
+    { name: 'Python', level: 80 },
+    { name: 'C#', level: 72 },
+    { name: 'TypeScript / Angular', level: 78 },
+    { name: 'Django REST Framework', level: 70 },
+    { name: 'HTML5 / CSS3', level: 85 },
+  ];
 
   constructor(private api: ApiService) {}
 

@@ -1,164 +1,155 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ApiService, AboutMe, ContentItem } from '../services/api.service';
+import { GithubService, GithubRepo } from '../services/github.service';
 import { CommonModule } from '@angular/common';
+
+interface FeaturedRepo extends GithubRepo {
+  customDesc?: string;
+}
+
+const CUSTOM_DESCRIPTIONS: Record<string, string> = {
+  'VpnApp_Demo-': 'C# ile geliştirilen, temel VPN tünelleme mantığını gösteren demo masaüstü uygulaması.',
+  'Otomatikmesajgonderici': 'Python ile yazılmış, belirli aralıklarla otomatik mesaj gönderimini sağlayan otomasyon aracı.',
+  'HesapMakinesi': 'Android Studio ortamında Java ile geliştirilen temel dört işlem yapabilen mobil hesap makinesi.',
+  'Csharp-Kalp_Yapimi': 'C# konsol uygulaması ile ASCII sanatı kullanılarak çizilen kalp animasyonu.',
+  'WebProgramlamaDersi': 'Web Programlama dersi kapsamında hazırlanan; HTML, CSS ve JavaScript örneklerini içeren ders repom.',
+};
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [RouterLink, CommonModule],
   template: `
-    <div class="container" *ngIf="aboutInfo">
-      <!-- Hero Intro Section -->
-      <section class="hero-section flex-center" style="flex-direction: column; text-align: center; margin-bottom: 80px; padding: 40px 0;">
-        <h1 class="text-gradient" style="margin-bottom: 20px;">Merhaba, Ben {{ aboutInfo.name_surname }}</h1>
-        <p style="font-size: 1.4rem; max-width: 800px; line-height: 1.6; margin-bottom: 40px;">
-          {{ aboutInfo.profession }} | <strong>{{ aboutInfo.school }}</strong> öğrencisi.
-        </p>
-        <div style="display: flex; gap: 16px;">
-          <a routerLink="/hakkimda" class="btn btn-primary">Hakkımda Detaylı Bilgi</a>
-          <a routerLink="/blog" class="btn btn-secondary">Blogumu Keşfet</a>
-        </div>
-      </section>
-
-      <!-- Glass Profile Card -->
-      <section style="margin-bottom: 80px;">
-        <div class="glass-card grid-2" style="align-items: center; padding: 48px;">
-          <!-- Profile Pic with Cyber Accent -->
-          <div class="profile-pic-container flex-center">
-            <div class="photo-glow-wrapper">
-              <div class="avatar-fallback" *ngIf="!aboutInfo.photo">
-                {{ getInitials(aboutInfo.name_surname) }}
-              </div>
-              <img *ngIf="aboutInfo.photo" [src]="aboutInfo.photo" alt="Profile Photo" class="profile-img">
-            </div>
-          </div>
-          <!-- Quick Bio Info -->
-          <div>
-            <span class="badge badge-primary" style="margin-bottom: 16px;">Hızlı Profil</span>
-            <h2 style="margin-bottom: 20px;">Siber Güvenlik & Yazılım</h2>
-            <p style="margin-bottom: 24px; font-size: 1.1rem; line-height: 1.7;">
-              {{ aboutInfo.bio_paragraph }}
-            </p>
-            <div class="quick-facts" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 32px;">
-              <div>
-                <strong style="color: var(--primary);">Yaş:</strong> <span style="color: var(--text-muted);">{{ aboutInfo.age }}</span>
-              </div>
-              <div>
-                <strong style="color: var(--primary);">Yaşadığım Şehir:</strong> <span style="color: var(--text-muted);">{{ aboutInfo.city }}</span>
-              </div>
-              <div style="grid-column: span 2;">
-                <strong style="color: var(--primary);">Eğitim / Meslek:</strong> <span style="color: var(--text-muted);">{{ aboutInfo.school }}</span>
-              </div>
-            </div>
-            <div style="display: flex; gap: 16px;">
-              <a *ngIf="aboutInfo.linkedin_url" [href]="aboutInfo.linkedin_url" target="_blank" class="social-link flex-center">LinkedIn</a>
-              <a *ngIf="aboutInfo.github_url" [href]="aboutInfo.github_url" target="_blank" class="social-link flex-center">Github</a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Recent Content (Blog Preview) -->
-      <section>
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
-          <div>
-            <span class="badge badge-primary" style="margin-bottom: 8px;">Son Paylaşımlar</span>
-            <h2>Neler Yazdım?</h2>
-          </div>
-          <a routerLink="/blog" style="color: var(--primary); font-weight: 500;" class="hover-underline">Tüm Yazılar →</a>
-        </div>
-
-        <div class="grid-3" *ngIf="recentItems.length > 0; else noContent">
-          <div class="glass-card flex-between" *ngFor="let item of recentItems" style="flex-direction: column; align-items: flex-start; height: 100%;">
-            <div style="width: 100%;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <span class="badge">{{ item.category_name }}</span>
-                <span style="font-size: 0.8rem; color: var(--text-dim);">{{ item.created_at | date:'dd.MM.yyyy' }}</span>
-              </div>
-              <h3 style="margin-bottom: 12px; line-height: 1.3;" class="card-title">{{ item.title }}</h3>
-              <p style="font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                {{ item.summary }}
+    <div class="container blog-layout" *ngIf="aboutInfo">
+      
+      <!-- Main Content Area: Posts -->
+      <main class="blog-main-content">
+        
+        <!-- Featured Post -->
+        <ng-container *ngIf="recentItems.length > 0; else noContent">
+          <a [routerLink]="['/blog', recentItems[0].slug]" class="featured-post-card" *ngIf="recentItems[0]">
+            <img [src]="recentItems[0].image || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1080&auto=format&fit=crop'" alt="Featured" class="featured-img">
+            <div class="featured-bg"></div>
+            <div class="content">
+              <span class="badge badge-primary" style="margin-bottom: 12px; position: relative; z-index: 2;">{{ recentItems[0].category_name }}</span>
+              <h2>{{ recentItems[0].title }}</h2>
+              <p style="color: rgba(255,255,255,0.8); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 1.1rem; max-width: 80%;">
+                {{ recentItems[0].summary }}
               </p>
             </div>
-            <a [routerLink]="['/blog', item.slug]" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem; width: 100%; text-align: center;">Okumaya Başla</a>
+          </a>
+
+          <!-- Other Recent Posts List -->
+          <div class="recent-posts-list">
+            <h3 style="margin-bottom: 24px; font-size: 1.6rem;">Son Yazılar</h3>
+            <a [routerLink]="['/blog', item.slug]" class="article-list-card" *ngFor="let item of recentItems.slice(1)">
+              <div class="meta">
+                <span class="badge" style="background: rgba(255,255,255,0.05);">{{ item.category_name }}</span>
+                <span>{{ item.created_at | date:'dd.MM.yyyy' }}</span>
+              </div>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.summary }}</p>
+            </a>
+            
+            <a routerLink="/blog" class="btn btn-secondary" style="width: 100%; margin-top: 16px; justify-content: center;">Tüm Yazıları Gör →</a>
           </div>
-        </div>
+        </ng-container>
+
         <ng-template #noContent>
-          <div class="glass-panel flex-center" style="padding: 60px; text-align: center; width: 100%;">
-            <p>Henüz içerik eklenmemiş.</p>
+          <div class="glass-panel flex-center" style="padding: 80px; text-align: center; flex-direction: column;">
+            <p style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 16px;">Henüz bir yazı yayınlanmadı.</p>
           </div>
         </ng-template>
-      </section>
+
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+
+        <!-- Author Profile Widget -->
+        <div class="glass-panel sidebar-profile">
+          <img *ngIf="aboutInfo.photo" [src]="aboutInfo.photo" alt="Author" class="profile-img">
+          <div *ngIf="!aboutInfo.photo" class="profile-img" style="display: flex; align-items: center; justify-content: center; background: var(--bg-surface); font-size: 2rem; font-weight: bold; color: var(--primary);">
+            {{ getInitials(aboutInfo.name_surname) }}
+          </div>
+
+          <h3>{{ aboutInfo.name_surname }}</h3>
+          <p style="color: var(--primary); font-size: 0.9rem; margin-bottom: 16px;">{{ aboutInfo.profession }}</p>
+          <p>{{ aboutInfo.bio_paragraph | slice:0:150 }}...</p>
+
+          <div class="social-links">
+            <a *ngIf="aboutInfo.linkedin_url" [href]="aboutInfo.linkedin_url" target="_blank" class="btn btn-secondary social-link">LinkedIn</a>
+            <a *ngIf="aboutInfo.github_url" [href]="aboutInfo.github_url" target="_blank" class="btn btn-secondary social-link">Github</a>
+          </div>
+
+          <a routerLink="/hakkimda" style="display: inline-block; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted); text-decoration: underline;">Hakkımda Daha Fazla</a>
+        </div>
+
+        <!-- Skills & Tools Widget -->
+        <div class="glass-panel" style="padding: 28px;">
+          <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 20px;">
+            Teknoloji & Araçlar
+          </h4>
+
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px; font-weight: 500;">Siber Güvenlik</p>
+          <div class="skills-tag-cloud" style="margin-bottom: 18px;">
+            <span class="skill-badge security">Nmap</span>
+            <span class="skill-badge security">Wireshark</span>
+            <span class="skill-badge security">Metasploit</span>
+            <span class="skill-badge security">Kali Linux</span>
+            <span class="skill-badge security">Burp Suite</span>
+          </div>
+
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px; font-weight: 500;">Programlama</p>
+          <div class="skills-tag-cloud" style="margin-bottom: 18px;">
+            <span class="skill-badge language">Python</span>
+            <span class="skill-badge language">C#</span>
+            <span class="skill-badge language">TypeScript</span>
+            <span class="skill-badge language">JavaScript</span>
+            <span class="skill-badge language">HTML / CSS</span>
+          </div>
+
+          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px; font-weight: 500;">Framework & Altyapı</p>
+          <div class="skills-tag-cloud">
+            <span class="skill-badge framework">Angular</span>
+            <span class="skill-badge framework">Django REST</span>
+            <span class="skill-badge framework">PostgreSQL</span>
+            <span class="skill-badge framework">Git</span>
+          </div>
+        </div>
+
+        <!-- Featured Project Widget -->
+        <div class="glass-panel" style="padding: 28px;">
+          <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 20px;">
+            Öne Çıkan Proje
+          </h4>
+          <div *ngFor="let repo of featuredRepos" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-glass);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span style="font-weight: 600; color: var(--text-main); font-size: 0.95rem;">{{ repo.name }}</span>
+              <a [href]="repo.html_url" target="_blank" style="color: var(--primary); font-size: 0.75rem;">GitHub →</a>
+            </div>
+            <p style="font-size: 0.85rem; margin-bottom: 10px; line-height: 1.5;">{{ repo.customDesc || repo.description || 'Proje açıklaması mevcut değil.' }}</p>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <span *ngIf="repo.language" class="skill-badge" style="font-size: 0.72rem;">{{ repo.language }}</span>
+              <span style="font-size: 0.75rem; color: var(--text-dim);">⭐ {{ repo.stargazers_count }}</span>
+            </div>
+          </div>
+          <a routerLink="/projeler" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.88rem;">Tüm Projeleri Gör →</a>
+        </div>
+
+      </aside>
+      
     </div>
   `,
-  styles: [`
-    .profile-img {
-      width: 250px;
-      height: 250px;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 3px solid var(--border-glass);
-      transition: transform var(--transition-smooth);
-    }
-    .avatar-fallback {
-      width: 250px;
-      height: 250px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--bg-surface) 0%, hsl(222, 24%, 20%) 100%);
-      border: 3px solid var(--border-glass);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
-      font-family: 'Playfair Display', serif;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .photo-glow-wrapper {
-      position: relative;
-      border-radius: 50%;
-      padding: 6px;
-      background: linear-gradient(135deg, var(--primary) 0%, transparent 100%);
-      box-shadow: var(--shadow-glow);
-    }
-    .photo-glow-wrapper:hover .profile-img {
-      transform: scale(1.05);
-    }
-    .social-link {
-      background-color: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-glass);
-      padding: 10px 20px;
-      border-radius: var(--radius-sm);
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-    .social-link:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-      border-color: var(--primary);
-      color: var(--text-main);
-    }
-    .card-title {
-      transition: color var(--transition-fast);
-    }
-    .glass-card:hover .card-title {
-      color: var(--primary);
-    }
-    .hover-underline:hover {
-      text-decoration: underline;
-    }
-    .flex-between {
-      display: flex;
-      justify-content: space-between;
-    }
-  `]
+  styles: []
 })
 export class HomeComponent implements OnInit {
   public aboutInfo: AboutMe | null = null;
   public recentItems: ContentItem[] = [];
+  public featuredRepos: FeaturedRepo[] = [];
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private github: GithubService) {}
 
   ngOnInit(): void {
     this.api.getAboutMe().subscribe({
@@ -167,8 +158,18 @@ export class HomeComponent implements OnInit {
     });
 
     this.api.getItems().subscribe({
-      next: (res) => this.recentItems = res.slice(0, 3), // Get top 3 recent items
+      next: (res) => this.recentItems = res.slice(0, 3),
       error: (err) => console.error("Items fetch error:", err)
+    });
+
+    this.github.getRepositories().subscribe({
+      next: (repos) => {
+        this.featuredRepos = repos.slice(0, 3).map(r => ({
+          ...r,
+          customDesc: CUSTOM_DESCRIPTIONS[r.name]
+        }));
+      },
+      error: () => {}
     });
   }
 

@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="container flex-center" style="min-height: 60vh;">
       <div class="glass-card" style="width: 100%; max-width: 450px; padding: 40px;">
@@ -73,7 +73,7 @@ import { AuthService } from '../services/auth.service';
             <a (click)="onForgotPassword($event)" href="#" class="form-link" style="color: var(--text-dim); transition: color var(--transition-fast);">
               Şifremi Unuttum
             </a>
-            <a (click)="onRegister($event)" href="#" class="form-link" style="color: var(--primary); font-weight: 500; transition: color var(--transition-fast);">
+            <a routerLink="/register" class="form-link" style="color: var(--primary); font-weight: 500; transition: color var(--transition-fast);">
               Kayıt Ol
             </a>
           </div>
@@ -119,13 +119,6 @@ export class LoginComponent {
     this.errorMessage = '';
     this.infoType = 'warning';
     this.infoMessage = '🔒 Siber güvenlik önlemleri gereği, şifre sıfırlama talepleri dış ağlara kapatılmıştır. Şifrenizi sıfırlamak için lütfen yerel veritabanı yönetim panelini kullanın veya sistem yöneticinizle iletişime geçin.';
-  }
-
-  public onRegister(event: Event): void {
-    event.preventDefault();
-    this.errorMessage = '';
-    this.infoType = 'info';
-    this.infoMessage = '🛡️ Bu blog sistemi kişisel bir siber güvenlik kütüphanesidir. Üye alımı dışarıya kapalıdır. Yeni yönetici hesabı eklemek için terminalinizde "python manage.py createsuperuser" komutunu koşturun.';
   }
 
   public clearInfo(): void {

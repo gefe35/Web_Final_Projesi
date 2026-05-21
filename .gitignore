@@ -5,6 +5,9 @@ Thumbs.db
 *.tmp
 *.bak
 
+# Database backups (may contain hashed credentials)
+backup.json
+
 # Python / Django
 __pycache__/
 *.pyc

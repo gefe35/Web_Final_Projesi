@@ -18,11 +18,18 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Göktuğ Efe Madran Blog" />
     
-    <!-- Google Fonts Prefetching & Performance Optimizations -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <app-root></app-root>
+    <app-root>
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #0e121a; color: #f8fafc; font-family: sans-serif;">
+        <h2>Uygulama Yükleniyor...</h2>
+        <p style="color: #94a3b8;">Eğer bu ekranı görüyorsanız, projeyi terminal üzerinden başlatmanız gerekiyor.</p>
+        <code style="background: #1e293b; padding: 8px 16px; border-radius: 8px; margin-top: 16px; color: #fbbf24;">npm run start</code>
+      </div>
+    </app-root>
   </body>
 </html>

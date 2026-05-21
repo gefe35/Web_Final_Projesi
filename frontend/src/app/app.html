@@ -1,21 +1,26 @@
 <header class="glass-header">
   <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-    <a routerLink="/" class="logo" style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+    <a routerLink="/" class="logo"
+      style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
       <span style="color: var(--primary); font-family: monospace;">&lt;</span>
-      Göktyğ Efe
+      Göktuğ Efe
       <span style="color: var(--primary); font-family: monospace;">/&gt;</span>
     </a>
-    
+
     <nav style="display: flex; align-items: center; gap: 28px;">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Ana Sayfa</a>
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Ana
+        Sayfa</a>
+      <a routerLink="/blog" routerLinkActive="active" class="nav-link">Tüm Yazılar</a>
       <a routerLink="/hakkimda" routerLinkActive="active" class="nav-link">Hakkımda</a>
-      <a routerLink="/blog" routerLinkActive="active" class="nav-link">Blog</a>
-      
+      <a routerLink="/projeler" routerLinkActive="active" class="nav-link">Projelerim</a>
+
       @if (authService.isAuthenticated()) {
-        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" style="color: var(--primary); font-weight: 500;">Yönetim Paneli</a>
-        <button (click)="onLogout()" class="btn btn-secondary" style="padding: 6px 14px; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.4); color: hsl(0, 84%, 70%);">Çıkış</button>
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link"
+        style="color: var(--primary); font-weight: 500;">Yönetim Paneli</a>
+      <button (click)="onLogout()" class="btn btn-secondary"
+        style="padding: 6px 14px; font-size: 0.85rem; border-color: rgba(239, 68, 68, 0.4); color: hsl(0, 84%, 70%);">Çıkış</button>
       } @else {
-        <a routerLink="/login" routerLinkActive="active" class="nav-link nav-admin-link">Giriş</a>
+      <a routerLink="/login" routerLinkActive="active" class="nav-link nav-admin-link">Giriş</a>
       }
     </nav>
   </div>
@@ -25,9 +30,58 @@
   <router-outlet></router-outlet>
 </main>
 
-<footer style="border-top: 1px solid var(--border-glass); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.9rem;">
+<footer style="border-top: 1px solid var(--border-glass); padding: 64px 0 32px 0;">
   <div class="container">
-    <p style="font-weight: 300;">&copy; 2026 Göktuğ Efe Madran. Konak Kavram Meslek Yüksekokulu - Siber Güvenlik Teknolojileri. Tüm Hakları Saklıdır.</p>
+    <div class="footer-grid">
+
+      <!-- Brand -->
+      <div class="footer-col">
+        <p style="font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
+          <span style="color: var(--primary); font-family: monospace;">&lt;</span>
+          Göktuğ Efe
+          <span style="color: var(--primary); font-family: monospace;">/&gt;</span>
+        </p>
+        <p style="font-size: 0.9rem; line-height: 1.7; max-width: 300px;">
+          Siber Güvenlik Teknolojileri öğrencisi. Web geliştirme, sızma testi ve ağ güvenliği üzerine çalışıyorum.
+        </p>
+        <div class="footer-social-icons">
+          <a href="https://github.com/gefe35" target="_blank" class="footer-social-icon" title="GitHub">
+            <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <a href="mailto:gefemadran@icloud.com" class="footer-social-icon" title="E-posta">
+            <svg height="18" width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="footer-col">
+        <h4>Sayfalar</h4>
+        <a routerLink="/">Ana Sayfa</a>
+        <a routerLink="/blog">Yazılar</a>
+        <a routerLink="/projeler">Projeler</a>
+        <a routerLink="/hakkimda">Hakkımda</a>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-col">
+        <h4>İletişim</h4>
+        <a href="https://github.com/gefe35" target="_blank">github.com/gefe35</a>
+        <a href="mailto:gefemadran@icloud.com">gefemadran@icloud.com</a>
+        <p style="margin-top: 8px;">İzmir, Türkiye</p>
+        <p>Konak Kavram MYO</p>
+      </div>
+
+    </div>
+
+    <div style="border-top: 1px solid var(--border-glass); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">
+        &copy; 2026 Göktuğ Efe Madran &mdash; Siber Güvenlik Teknolojileri
+      </p>
+      <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">
+        Angular & Django REST ile geliştirildi
+      </p>
+    </div>
   </div>
 </footer>
 
@@ -39,11 +93,12 @@
     position: relative;
     padding: 6px 0;
   }
-  
-  .nav-link:hover, .nav-link.active {
+
+  .nav-link:hover,
+  .nav-link.active {
     color: var(--text-main);
   }
-  
+
   .nav-link::after {
     content: '';
     position: absolute;
@@ -54,8 +109,9 @@
     background-color: var(--primary);
     transition: width var(--transition-fast);
   }
-  
-  .nav-link:hover::after, .nav-link.active::after {
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
     width: 100%;
   }
 
@@ -70,7 +126,7 @@
     background-color: rgba(255, 255, 255, 0.1);
     border-color: var(--primary);
   }
-  
+
   .nav-admin-link::after {
     display: none;
   }

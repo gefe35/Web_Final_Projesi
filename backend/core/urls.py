@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from profile_info.views import RegisterView
 from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
@@ -25,6 +26,9 @@ urlpatterns = [
     # Applications
     path('api/', include('profile_info.urls')),
     path('api/', include('blog_content.urls')),
+    
+    # Register API directly injected from views
+    path('api/auth/register/', RegisterView.as_view(), name='register'),
 ]
 
 # Serves uploaded media & static files in debug mode

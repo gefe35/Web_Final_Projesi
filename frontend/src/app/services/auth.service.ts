@@ -1,6 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, timeout, catchError, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,13 +18,22 @@ export class AuthService {
 
   public login(credentials: { username: string; password: string }): Observable<{ access: string; refresh: string }> {
     return this.http.post<{ access: string; refresh: string }>(`${this.apiUrl}/login/`, credentials).pipe(
+      timeout(8000),
       tap(response => {
         if (response.access) {
           localStorage.setItem('access_token', response.access);
           localStorage.setItem('refresh_token', response.refresh);
           this.accessTokenSignal.set(response.access);
         }
-      })
+      }),
+      catchError(err => throwError(() => err))
+    );
+  }
+
+  public register(userData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register/`, userData).pipe(
+      timeout(8000),
+      catchError(err => throwError(() => err))
     );
   }
 

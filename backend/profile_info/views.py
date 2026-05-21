@@ -1,11 +1,32 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.contrib.auth.models import User
 from .models import AboutMe
-from .serializers import AboutMeSerializer
+from .serializers import AboutMeSerializer, RegisterSerializer
 from drf_spectacular.utils import extend_schema
+
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        operation_id="register_user",
+        summary="Yeni kullanıcı kaydı oluştur",
+        description="Dışarıdan kullanıcı kayıt olmak için kullanılır. Şifre eşleşmesi ve validasyon içerir.",
+        request=RegisterSerializer,
+        responses={201: RegisterSerializer}
+    )
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({
+                "message": "Kullanıcı başarıyla oluşturuldu.",
+                "username": user.username
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AboutMeView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
