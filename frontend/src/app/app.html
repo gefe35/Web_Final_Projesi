@@ -1,147 +1,38 @@
-<header class="glass-header">
-  <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
-    <a routerLink="/" class="logo"
-      style="font-family: 'Playfair Display', Georgia, serif; font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 8px; z-index: 101;">
-      <span style="color: var(--primary); font-family: monospace;">&lt;</span>
-      Göktuğ Efe
-      <span style="color: var(--primary); font-family: monospace;">/&gt;</span>
+<nav class="navbar">
+  <div class="container">
+    <a routerLink="/" class="nav-brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </svg>
+      <span>Cyber</span>Blog
     </a>
 
-    <!-- Desktop Nav -->
-    <nav class="desktop-nav" style="display: flex; align-items: center; gap: 28px;">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Ana Sayfa</a>
-      <a routerLink="/blog" routerLinkActive="active" class="nav-link">Yazılar</a>
-      <a routerLink="/hakkimda" routerLinkActive="active" class="nav-link">Hakkımda</a>
-      <a routerLink="/projeler" routerLinkActive="active" class="nav-link">Projeler</a>
-      <a routerLink="/terminal" routerLinkActive="active" class="nav-link nav-terminal-link">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:4px;"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-        Terminal
-      </a>
-    </nav>
-
-    <!-- Hamburger Button (mobile only) -->
-    <button class="hamburger-btn" (click)="toggleMobileMenu()" [class.is-open]="isMobileMenuOpen" aria-label="Menüyü aç/kapat">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    <div class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Ana Sayfa</a>
+      <a routerLink="/hakkimda" routerLinkActive="active">Hakkımda</a>
+      <a routerLink="/kategori/teknik-bilgi" routerLinkActive="active">Teknik Bilgi</a>
+      <a routerLink="/kategori/teknik-olmayan-bilgi" routerLinkActive="active">Teknik Olmayan</a>
+      <a routerLink="/kategori/arastirmalarim" routerLinkActive="active">Araştırmalarım</a>
+      <a routerLink="/kategori/hobilerim" routerLinkActive="active">Hobilerim</a>
+      <a routerLink="/kategori/kitaplar" routerLinkActive="active">Kitaplık</a>
+      <a routerLink="/terminal" routerLinkActive="active" style="color: var(--primary);">>_ Terminal</a>
+    </div>
   </div>
-</header>
+</nav>
 
-<!-- Mobile Nav Panel -->
-<div class="mobile-nav-panel" [class.is-open]="isMobileMenuOpen">
-  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="mobile-nav-link">Ana Sayfa</a>
-  <a routerLink="/blog" routerLinkActive="active" class="mobile-nav-link">Tüm Yazılar</a>
-  <a routerLink="/hakkimda" routerLinkActive="active" class="mobile-nav-link">Hakkımda</a>
-  <a routerLink="/projeler" routerLinkActive="active" class="mobile-nav-link">Projelerim</a>
-  <a routerLink="/terminal" routerLinkActive="active" class="mobile-nav-link" style="color: var(--primary);">
-    ▸ Siber Terminal
-  </a>
-</div>
-
-<main style="padding: 40px 0 80px 0;">
+<main class="main-content">
   <router-outlet></router-outlet>
 </main>
 
-<footer style="border-top: 1px solid var(--border-glass); padding: 64px 0 32px 0;">
+<footer class="footer">
   <div class="container">
-    <div class="footer-grid">
-
-      <!-- Brand -->
-      <div class="footer-col">
-        <p style="font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--text-main); margin-bottom: 12px;">
-          <span style="color: var(--primary); font-family: monospace;">&lt;</span>
-          Göktuğ Efe
-          <span style="color: var(--primary); font-family: monospace;">/&gt;</span>
-        </p>
-        <p style="font-size: 0.9rem; line-height: 1.7; max-width: 300px;">
-          Siber Güvenlik Teknolojileri öğrencisi. Web geliştirme, sızma testi ve ağ güvenliği üzerine çalışıyorum.
-        </p>
-        <div class="footer-social-icons">
-          <a href="https://github.com/gefe35" target="_blank" class="footer-social-icon" title="GitHub">
-            <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-          </a>
-          <a href="mailto:gefemadran@icloud.com" class="footer-social-icon" title="E-posta">
-            <svg height="18" width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-          </a>
-        </div>
-      </div>
-
-      <!-- Navigation -->
-      <div class="footer-col">
-        <h4>Sayfalar</h4>
-        <a routerLink="/">Ana Sayfa</a>
-        <a routerLink="/blog">Yazılar</a>
-        <a routerLink="/projeler">Projeler</a>
-        <a routerLink="/hakkimda">Hakkımda</a>
-        <a routerLink="/terminal">Siber Terminal</a>
-      </div>
-
-      <!-- Contact -->
-      <div class="footer-col">
-        <h4>İletişim</h4>
-        <a href="https://github.com/gefe35" target="_blank">github.com/gefe35</a>
-        <a href="mailto:gefemadran@icloud.com">gefemadran@icloud.com</a>
-        <p style="margin-top: 8px;">İzmir, Türkiye</p>
-        <p>Konak Kavram MYO</p>
-      </div>
-
+    <div style="display: flex; justify-content: center; gap: 24px; margin-bottom: 24px;">
+      <a href="https://github.com/gefe35" target="_blank" style="color: var(--text-muted);">GitHub</a>
+      <a href="https://www.linkedin.com/in/goktug-efe-m-8b873b306/" target="_blank"
+        style="color: var(--text-muted);">LinkedIn</a>
+      <a routerLink="/login" style="color: var(--primary);">Yönetici Girişi</a>
     </div>
-
-    <div style="border-top: 1px solid var(--border-glass); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-      <p style="font-size: 0.85rem; color: var(--text-dim); margin: 0;">
-        &copy; 2026 Göktuğ Efe Madran &mdash; Siber Güvenlik Teknolojileri
-      </p>
-      <p style="font-size: 0.8rem; color: var(--text-dim); margin: 0;">
-        Angular & Django REST ile geliştirildi
-      </p>
-    </div>
+    <p style="margin: 0;">&copy; 2026 Göktuğ Efe Madran. Tüm hakları saklıdır.</p>
   </div>
 </footer>
-
-<style>
-  .nav-link {
-    font-size: 0.95rem;
-    font-weight: 400;
-    color: var(--text-muted);
-    position: relative;
-    padding: 6px 0;
-  }
-
-  .nav-link:hover,
-  .nav-link.active {
-    color: var(--text-main);
-  }
-
-  .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--primary);
-    transition: width var(--transition-fast);
-  }
-
-  .nav-link:hover::after,
-  .nav-link.active::after {
-    width: 100%;
-  }
-
-  .nav-admin-link {
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-glass);
-    padding: 6px 14px !important;
-    border-radius: var(--radius-sm);
-  }
-
-  .nav-admin-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-color: var(--primary);
-  }
-
-  .nav-admin-link::after {
-    display: none;
-  }
-</style>

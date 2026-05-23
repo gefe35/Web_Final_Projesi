@@ -1,271 +1,69 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { ApiService, AboutMe, ContentItem, Project } from '../services/api.service';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { ApiService } from '../services/api.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [CommonModule, RouterModule],
   template: `
-
-    <!-- ═══════════════════════════════════════════════ -->
-    <!--  HERO SECTION                                    -->
-    <!-- ═══════════════════════════════════════════════ -->
-    <section class="hero-section">
-      <div class="hero-grid-bg"></div>
-      <div class="container hero-inner">
-
-        <div class="hero-badge">
-          <span class="hero-status-dot"></span>
-          <code>root&#64;gefe35:~$</code>
-          <span style="opacity:.5; margin-left: 4px;">_</span>
-        </div>
-
-        <h1 class="hero-title">
-          Göktuğ Efe <span class="text-gradient">Madran</span>
+    <!-- Hero Section -->
+    <div style="padding: 60px 0 100px 0; text-align: center; border-bottom: 1px solid var(--border-color); background: radial-gradient(circle at top, rgba(88, 166, 255, 0.1) 0%, transparent 60%); margin-top: -60px;">
+      <div class="container">
+        <h1 style="font-size: 3.5rem; margin-bottom: 24px; color: #ffffff;">
+          Dijital Dünyanın <br>
+          <span style="color: var(--primary);">Savunma Hattına</span> Hoş Geldiniz.
         </h1>
-
-        <div class="hero-subtitle-row">
-          <span class="hero-role-text">{{ typingText }}</span><span class="hero-cursor" [class.blink]="isCursorVisible">|</span>
-        </div>
-
-        <p class="hero-bio">
-          İzmir'de Siber Güvenlik Teknolojileri öğrencisi. Ağ analizi, sızma testleri
-          ve güvenli Full-Stack geliştirme üzerine çalışıyorum.
+        <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 40px auto; line-height: 1.8;">
+          Siber güvenlik, ağ sistemleri, zafiyet analizleri ve yazılım geliştirme üzerine kişisel notlar, araştırmalar ve projeler.
         </p>
+        <div style="display: flex; gap: 16px; justify-content: center;">
+          <a routerLink="/kategori/teknik-bilgi" class="btn btn-primary" style="padding: 14px 28px; font-size: 1.1rem;">Teknik Notları Oku</a>
+          <a routerLink="/hakkimda" class="btn btn-outline" style="padding: 14px 28px; font-size: 1.1rem;">Ben Kimim?</a>
+        </div>
+      </div>
+    </div>
 
-        <div class="hero-stats">
-          <div class="hero-stat">
-            <span class="stat-num">{{ totalRepos || 7 }}</span>
-            <span class="stat-label">GitHub Repo</span>
+    <!-- Features / Highlights -->
+    <div class="container" style="margin-top: 60px;">
+      <h2 style="text-align: center; margin-bottom: 40px;">Neler Bulabilirsiniz?</h2>
+      <div class="grid-3">
+        
+        <div class="glass-card" style="text-align: center; padding: 40px 24px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(88, 166, 255, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
           </div>
-          <div class="stat-sep"></div>
-          <div class="hero-stat">
-            <span class="stat-num">{{ totalPosts || 6 }}</span>
-            <span class="stat-label">Blog Yazısı</span>
-          </div>
-          <div class="stat-sep"></div>
-          <div class="hero-stat">
-            <span class="stat-num">5+</span>
-            <span class="stat-label">Güvenlik Aracı</span>
-          </div>
+          <h3 style="margin-bottom: 16px;">Siber Güvenlik</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Zafiyet yönetimi, sızma testleri ve savunma mimarileri üzerine araştırmalarım.</p>
         </div>
 
-        <div class="hero-cta">
-          <a routerLink="/projeler" class="btn btn-primary">Projelerimi Gör</a>
-          <a routerLink="/terminal" class="btn btn-secondary hero-terminal-btn">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-            Terminal'i Dene
-          </a>
+        <div class="glass-card" style="text-align: center; padding: 40px 24px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(46, 160, 67, 0.1); color: var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+          </div>
+          <h3 style="margin-bottom: 16px;">Projeler</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Python, C++ ve donanım bileşenleri ile geliştirdiğim güvenlik projeleri.</p>
+        </div>
+
+        <div class="glass-card" style="text-align: center; padding: 40px 24px;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(139, 148, 158, 0.1); color: var(--text-main); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <h3 style="margin-bottom: 16px;">Gündelik</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Okuduğum kitaplar, hobilerim ve teknik olmayan düşüncelerim.</p>
         </div>
 
       </div>
-    </section>
-
-    <!-- ═══════════════════════════════════════════════ -->
-    <!--  BLOG LAYOUT                                     -->
-    <!-- ═══════════════════════════════════════════════ -->
-    <div class="container blog-layout" *ngIf="aboutInfo">
-      
-      <!-- Main Content Area: Posts -->
-      <main class="blog-main-content">
-        
-        <!-- Featured Post -->
-        <ng-container *ngIf="recentItems.length > 0; else noContent">
-          <a [routerLink]="['/blog', recentItems[0].slug]" class="featured-post-card" *ngIf="recentItems[0]">
-            <img [src]="recentItems[0].image || 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1080&auto=format&fit=crop'" alt="Featured" class="featured-img">
-            <div class="featured-bg"></div>
-            <div class="content">
-              <span class="badge badge-primary" style="margin-bottom: 12px; position: relative; z-index: 2;">{{ recentItems[0].category_name }}</span>
-              <h2>{{ recentItems[0].title }}</h2>
-              <p style="color: rgba(255,255,255,0.8); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 1.1rem; max-width: 80%;">
-                {{ recentItems[0].summary }}
-              </p>
-            </div>
-          </a>
-
-          <!-- Other Recent Posts List -->
-          <div class="recent-posts-list">
-            <h3 style="margin-bottom: 24px; font-size: 1.6rem;">Son Yazılar</h3>
-            <a [routerLink]="['/blog', item.slug]" class="article-list-card" *ngFor="let item of recentItems.slice(1)">
-              <div class="meta">
-                <span class="badge" style="background: rgba(255,255,255,0.05);">{{ item.category_name }}</span>
-                <span>{{ item.created_at | date:'dd.MM.yyyy' }}</span>
-              </div>
-              <h3>{{ item.title }}</h3>
-              <p>{{ item.summary }}</p>
-            </a>
-            
-            <a routerLink="/blog" class="btn btn-secondary" style="width: 100%; margin-top: 16px; justify-content: center;">Tüm Yazıları Gör →</a>
-          </div>
-        </ng-container>
-
-        <ng-template #noContent>
-          <div class="glass-panel flex-center" style="padding: 80px; text-align: center; flex-direction: column;">
-            <p style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 16px;">Henüz bir yazı yayınlanmadı.</p>
-          </div>
-        </ng-template>
-
-      </main>
-
-      <!-- Sidebar -->
-      <aside class="sidebar">
-
-        <!-- Author Profile Widget -->
-        <div class="glass-panel sidebar-profile">
-          <img *ngIf="aboutInfo.photo" [src]="aboutInfo.photo" alt="Author" class="profile-img">
-          <div *ngIf="!aboutInfo.photo" class="profile-img" style="display: flex; align-items: center; justify-content: center; background: var(--bg-surface); font-size: 2rem; font-weight: bold; color: var(--primary);">
-            {{ getInitials(aboutInfo.name_surname) }}
-          </div>
-
-          <h3>{{ aboutInfo.name_surname }}</h3>
-          <p style="color: var(--primary); font-size: 0.9rem; margin-bottom: 16px;">{{ aboutInfo.profession }}</p>
-          <p>{{ aboutInfo.bio_paragraph | slice:0:150 }}...</p>
-
-          <div class="social-links">
-            <a *ngIf="aboutInfo.linkedin_url" [href]="aboutInfo.linkedin_url" target="_blank" class="btn btn-secondary social-link">LinkedIn</a>
-            <a *ngIf="aboutInfo.github_url" [href]="aboutInfo.github_url" target="_blank" class="btn btn-secondary social-link">Github</a>
-          </div>
-
-          <a routerLink="/hakkimda" style="display: inline-block; margin-top: 20px; font-size: 0.9rem; color: var(--text-muted); text-decoration: underline;">Hakkımda Daha Fazla</a>
-        </div>
-
-        <!-- Skills & Tools Widget -->
-        <div class="glass-panel" style="padding: 28px;">
-          <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 20px;">
-            Teknoloji & Araçlar
-          </h4>
-
-          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px; font-weight: 500;">Siber Güvenlik</p>
-          <div class="skills-tag-cloud" style="margin-bottom: 18px;">
-            <span class="skill-badge security">Nmap</span>
-            <span class="skill-badge security">Wireshark</span>
-            <span class="skill-badge security">Metasploit</span>
-            <span class="skill-badge security">Kali Linux</span>
-            <span class="skill-badge security">Burp Suite</span>
-          </div>
-
-          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px; font-weight: 500;">Programlama</p>
-          <div class="skills-tag-cloud" style="margin-bottom: 18px;">
-            <span class="skill-badge language">Python</span>
-            <span class="skill-badge language">C#</span>
-            <span class="skill-badge language">TypeScript</span>
-            <span class="skill-badge language">JavaScript</span>
-            <span class="skill-badge language">HTML / CSS</span>
-          </div>
-
-          <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 10px; font-weight: 500;">Framework & Altyapı</p>
-          <div class="skills-tag-cloud">
-            <span class="skill-badge framework">Angular</span>
-            <span class="skill-badge framework">Django REST</span>
-            <span class="skill-badge framework">PostgreSQL</span>
-            <span class="skill-badge framework">Git</span>
-          </div>
-        </div>
-
-        <!-- Featured Project Widget -->
-        <div class="glass-panel" style="padding: 28px;">
-          <h4 style="font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 20px;">
-            Öne Çıkan Projeler
-          </h4>
-          <div *ngFor="let project of featuredProjects" style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-glass);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <span style="font-weight: 600; color: var(--text-main); font-size: 0.95rem;">{{ project.name }}</span>
-              <a *ngIf="project.github_url" [href]="project.github_url" target="_blank" style="color: var(--primary); font-size: 0.75rem;">GitHub →</a>
-            </div>
-            <p style="font-size: 0.85rem; margin-bottom: 10px; line-height: 1.5;">{{ project.description || 'Proje açıklaması mevcut değil.' }}</p>
-            <div style="display: flex; gap: 10px; align-items: center;">
-              <span *ngIf="project.language" class="skill-badge" style="font-size: 0.72rem;">{{ project.language }}</span>
-            </div>
-          </div>
-          <a routerLink="/projeler" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 0.88rem;">Tüm Projeleri Gör →</a>
-        </div>
-
-      </aside>
-      
     </div>
-  `,
-  styles: []
+  `
 })
-export class HomeComponent implements OnInit, OnDestroy {
-  public aboutInfo: AboutMe | null = null;
-  public recentItems: ContentItem[] = [];
-  public featuredProjects: Project[] = [];
-  public totalRepos = 0;
-  public totalPosts = 0;
-
-  // Typing animation
-  public typingText = '';
-  public isCursorVisible = true;
-  private readonly roles = [
-    'Siber Güvenlik Araştırmacısı',
-    'Full-Stack Geliştirici',
-    'CTF Meraklısı',
-    'Network Analisti',
-  ];
-  private roleIdx = 0;
-  private charIdx = 0;
-  private isDeleting = false;
-  private typingTimer: ReturnType<typeof setTimeout> | null = null;
-
-  constructor(private api: ApiService) {}
-
-  ngOnInit(): void {
-    this.startTyping();
-
-    this.api.getAboutMe().subscribe({
-      next: (res) => this.aboutInfo = res,
-      error: (err) => console.error('About me fetch error:', err)
-    });
-
-    this.api.getItems().subscribe({
-      next: (res) => {
-        this.totalPosts = res.length;
-        this.recentItems = res.slice(0, 3);
-      },
-      error: (err) => console.error('Items fetch error:', err)
-    });
-
-    this.api.getProjects().subscribe({
-      next: (projects) => {
-        this.totalRepos = projects.length;
-        this.featuredProjects = projects.slice(0, 3);
-      },
-      error: () => {}
-    });
-  }
-
-  ngOnDestroy(): void {
-    if (this.typingTimer) clearTimeout(this.typingTimer);
-  }
-
-  private startTyping(): void {
-    const fullText = this.roles[this.roleIdx];
-    if (!this.isDeleting) {
-      this.typingText = fullText.slice(0, this.charIdx + 1);
-      this.charIdx++;
-      if (this.charIdx === fullText.length) {
-        this.isDeleting = true;
-        this.typingTimer = setTimeout(() => this.startTyping(), 2200);
-        return;
-      }
-    } else {
-      this.typingText = fullText.slice(0, this.charIdx - 1);
-      this.charIdx--;
-      if (this.charIdx === 0) {
-        this.isDeleting = false;
-        this.roleIdx = (this.roleIdx + 1) % this.roles.length;
-      }
-    }
-    this.typingTimer = setTimeout(() => this.startTyping(), this.isDeleting ? 55 : 85);
-  }
-
-  public getInitials(name: string): string {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase();
-  }
-}
+export class HomeComponent {}

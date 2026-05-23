@@ -1,49 +1,56 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, timeout, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, tap, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly apiUrl = 'http://localhost:8000/api/auth';
-  
-  // Signal representation of the JWT token
-  private readonly accessTokenSignal = signal<string | null>(localStorage.getItem('access_token'));
-  
-  // Computed signal to track auth state reactively
-  public readonly isAuthenticated = computed(() => !!this.accessTokenSignal());
+  private apiUrl = 'http://localhost:8000/api/token/';
+  private isLoggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
 
   constructor(private http: HttpClient) {}
 
-  public login(credentials: { username: string; password: string }): Observable<{ access: string; refresh: string }> {
-    return this.http.post<{ access: string; refresh: string }>(`${this.apiUrl}/login/`, credentials).pipe(
-      timeout(8000),
-      tap(response => {
-        if (response.access) {
-          localStorage.setItem('access_token', response.access);
-          localStorage.setItem('refresh_token', response.refresh);
-          this.accessTokenSignal.set(response.access);
+
+  login(credentials: any): Observable<any> {
+    return this.http.post(this.apiUrl, credentials).pipe(
+      tap({
+        next: (res: any) => {
+          localStorage.setItem('access_token', res.access);
+          localStorage.setItem('refresh_token', res.refresh);
+          this.isLoggedInSubject.next(true);
+        },
+        error: (err) => {
+          console.error('AuthService login hatası:', err);
         }
       }),
       catchError(err => throwError(() => err))
     );
   }
 
-  public register(userData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register/`, userData).pipe(
-      timeout(8000),
-      catchError(err => throwError(() => err))
-    );
-  }
-
-  public logout(): void {
+  logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    this.accessTokenSignal.set(null);
+    this.isLoggedInSubject.next(false);
   }
 
-  public getToken(): string | null {
-    return this.accessTokenSignal();
+  hasToken(): boolean {
+    if (typeof window !== 'undefined' && window.localStorage) {
+        return !!localStorage.getItem('access_token');
+    }
+    return false;
+  }
+
+  isLoggedIn(): Observable<boolean> {
+    return this.isLoggedInSubject.asObservable();
+  }
+
+  getToken(): string | null {
+    if (typeof window !== 'undefined' && window.localStorage) {
+        return localStorage.getItem('access_token');
+    }
+    return null;
   }
 }

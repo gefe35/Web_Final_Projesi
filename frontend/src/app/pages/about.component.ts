@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 import { ApiService, AboutMe } from '../services/api.service';
 
 @Component({
   selector: 'app-about',
   standalone: true,
-  imports: [CommonModule],
+  imports: [NgIf, NgFor],
   template: `
     <div class="container" *ngIf="aboutInfo">
       <section style="max-width: 900px; margin: 0 auto;">
@@ -36,7 +36,7 @@ import { ApiService, AboutMe } from '../services/api.service';
           <div>
             <h2 style="margin-bottom: 24px;">Ben Kimim?</h2>
             <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 30px;">
-              {{ aboutInfo.bio_paragraph }}
+              Siber güvenlik alanında güncel teknolojileri takip eden, hem macOS hem de Windows ekosistemlerinde yetkin bir siber güvenlik öğrencisiyim. Farklı işletim sistemlerindeki deneyimim sayesinde, sistem açıkları ve ağ güvenliği konularına çok yönlü bir perspektiften yaklaşabiliyorum.
             </p>
 
             <div class="glass-panel" style="padding: 24px;">
@@ -59,9 +59,9 @@ import { ApiService, AboutMe } from '../services/api.service';
           <div class="timeline-item">
             <div class="timeline-dot"></div>
             <div class="glass-card timeline-card">
-              <span class="badge badge-primary">Eğitim (Şu Anda)</span>
-              <h3 style="margin: 8px 0 12px 0; font-size: 1.2rem;">Konak Kavram Meslek Yüksekokulu</h3>
-              <p style="font-weight: 500; color: var(--text-main); margin-bottom: 8px;">Siber Güvenlik Teknolojileri Programı</p>
+              <span class="badge badge-primary">Ön Lisans, Siber Güvenlik Teknolojileri</span>
+              <h3 style="margin: 8px 0 12px 0; font-size: 1.2rem;">Konak Kavram Meslek Yüksekokulu, İzmir</h3>
+              <p style="font-weight: 500; color: var(--text-main); margin-bottom: 8px;">[Başlangıç Yılı] – Devam Ediyor</p>
               <p style="font-size: 0.95rem;">
                 Ağ güvenliği, sızma testleri, siber olaylara müdahale ve kriptoloji alanlarında pratik ve teorik eğitimler. Laboratuvar ortamlarında uygulamalı zafiyet analizleri gerçekleştirme.
               </p>
@@ -100,32 +100,50 @@ import { ApiService, AboutMe } from '../services/api.service';
 
         <div class="grid-2" style="align-items: start; margin-bottom: 80px;">
 
-          <!-- Security Tools -->
-          <div class="glass-panel" style="padding: 32px;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 28px; color: var(--primary);">Siber Güvenlik Araçları</h3>
-            <div *ngFor="let skill of securitySkills" class="skill-bar-item">
-              <div class="skill-bar-meta">
-                <span>{{ skill.name }}</span>
-                <span>{{ skill.level }}%</span>
+          <!-- Technical Skills -->
+          <div class="glass-panel" style="padding: 32px; grid-column: span 2;">
+            <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: var(--primary);">İşletim Sistemleri</h3>
+            <ul style="list-style: none; padding: 0; color: var(--text-muted); line-height: 1.8; margin-bottom: 28px;">
+              <li><strong style="color: var(--text-main);">macOS:</strong> Kullanıcı ve Güvenlik Yönetimi</li>
+              <li><strong style="color: var(--text-main);">Windows:</strong> Sistem Yönetimi ve Güvenlik Mimarisi</li>
+            </ul>
+
+            <h3 style="font-size: 1.1rem; margin-bottom: 20px; color: var(--primary);">Siber Güvenlik Odak Alanları</h3>
+            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 28px;">Sistem güvenliği, siber tehdit analizi, ağ izleme ve temel sızma testleri.</p>
+
+            <div class="grid-2" style="gap: 24px;">
+              <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--primary);">Yazılım ve Geliştirme</h3>
+                <p style="color: var(--text-muted); margin: 0;">Android Studio, Flutter</p>
               </div>
-              <div class="skill-bar-track">
-                <div class="skill-bar-fill" [style.--fill-width]="skill.level + '%'"></div>
+              <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--primary);">Araçlar ve Teknolojiler</h3>
+                <p style="color: var(--text-muted); margin: 0;">Docker, MCP (Model Context Protocol)</p>
               </div>
             </div>
           </div>
 
-          <!-- Programming -->
-          <div class="glass-panel" style="padding: 32px;">
-            <h3 style="font-size: 1.1rem; margin-bottom: 28px; color: var(--primary);">Programlama & Geliştirme</h3>
-            <div *ngFor="let skill of devSkills" class="skill-bar-item">
-              <div class="skill-bar-meta">
-                <span>{{ skill.name }}</span>
-                <span>{{ skill.level }}%</span>
-              </div>
-              <div class="skill-bar-track">
-                <div class="skill-bar-fill" [style.--fill-width]="skill.level + '%'"></div>
-              </div>
-            </div>
+        </div>
+
+        <!-- Interests & Activities -->
+        <h2 style="margin-bottom: 16px; text-align: center;">İlgi Alanları & Aktiviteler</h2>
+        <p style="text-align: center; margin-bottom: 48px; color: var(--text-muted);">Saha dışındaki hobilerim ve kültürel faaliyetlerim.</p>
+        
+        <div class="grid-3" style="margin-bottom: 80px;">
+          <div class="glass-card text-center" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 16px;">📸</div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--text-main);">Görsel Sanatlar</h3>
+            <p style="font-size: 0.95rem; margin: 0;">Mobil fotoğrafçılık (Telefon kamerası ile şehir, manzara ve doğa çekimleri)</p>
+          </div>
+          <div class="glass-card text-center" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 16px;">✈️</div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--text-main);">Kültürel Keşifler</h3>
+            <p style="font-size: 0.95rem; margin: 0;">Aktif seyahat</p>
+          </div>
+          <div class="glass-card text-center" style="display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <div style="font-size: 2rem; margin-bottom: 16px;">🤿</div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 12px; color: var(--text-main);">Açık Hava & Doğa</h3>
+            <p style="font-size: 0.95rem; margin: 0;">Tüplü dalış (Scuba diving) ve kıyı keşifleri</p>
           </div>
 
         </div>
