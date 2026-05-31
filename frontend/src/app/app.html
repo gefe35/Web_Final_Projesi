@@ -1,23 +1,31 @@
 <nav class="navbar">
   <div class="container">
     <a routerLink="/" class="nav-brand">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-      </svg>
-      <span>Cyber</span>Blog
+      <span class="brand-mark">G</span>
+      Göktuğ Efe
     </a>
 
-    <div class="nav-links">
-      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Ana Sayfa</a>
+    <div class="nav-links" [class.open]="isMobileMenuOpen">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Ana Sayfa</a>
       <a routerLink="/hakkimda" routerLinkActive="active">Hakkımda</a>
-      <a routerLink="/kategori/teknik-bilgi" routerLinkActive="active">Teknik Bilgi</a>
-      <a routerLink="/kategori/teknik-olmayan-bilgi" routerLinkActive="active">Teknik Olmayan</a>
-      <a routerLink="/kategori/arastirmalarim" routerLinkActive="active">Araştırmalarım</a>
-      <a routerLink="/kategori/hobilerim" routerLinkActive="active">Hobilerim</a>
-      <a routerLink="/kategori/kitaplar" routerLinkActive="active">Kitaplık</a>
-      <a routerLink="/terminal" routerLinkActive="active" style="color: var(--primary);">>_ Terminal</a>
+      <a *ngFor="let s of sections" [routerLink]="'/' + s.route" routerLinkActive="active">{{ s.short }}</a>
+
+      <ng-container *ngIf="(auth.isLoggedIn() | async); else loggedOut">
+        <a routerLink="/yonetim" routerLinkActive="active" class="nav-cta btn btn-primary btn-sm">Yönetim</a>
+        <a (click)="logout()" style="cursor: pointer;">Çıkış</a>
+      </ng-container>
+      <ng-template #loggedOut>
+        <a routerLink="/giris" class="nav-cta btn btn-ghost btn-sm">Giriş</a>
+      </ng-template>
     </div>
+
+    <button class="nav-toggle" (click)="toggleMobileMenu()" aria-label="Menü">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
   </div>
 </nav>
 
@@ -27,12 +35,15 @@
 
 <footer class="footer">
   <div class="container">
-    <div style="display: flex; justify-content: center; gap: 24px; margin-bottom: 24px;">
-      <a href="https://github.com/gefe35" target="_blank" style="color: var(--text-muted);">GitHub</a>
-      <a href="https://www.linkedin.com/in/goktug-efe-m-8b873b306/" target="_blank"
-        style="color: var(--text-muted);">LinkedIn</a>
-      <a routerLink="/login" style="color: var(--primary);">Yönetici Girişi</a>
+    <h3>Göktuğ Efe Madran</h3>
+    <p style="color: #cfc9bd; max-width: 440px; margin: 0;">
+      Siber güvenlik ve full-stack geliştirme üzerine öğrendiklerimi paylaştığım kişisel alan.
+    </p>
+    <div class="footer-links">
+      <a href="https://github.com/gefe35" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/goktug-efe-m-8b873b306/" target="_blank" rel="noopener">LinkedIn</a>
+      <a routerLink="/giris">Yönetici Girişi</a>
     </div>
-    <p style="margin: 0;">&copy; 2026 Göktuğ Efe Madran. Tüm hakları saklıdır.</p>
+    <p class="footer-copy">&copy; {{ year }} Göktuğ Efe Madran · Tüm hakları saklıdır.</p>
   </div>
 </footer>

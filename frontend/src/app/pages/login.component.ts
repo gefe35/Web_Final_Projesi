@@ -1,70 +1,71 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   template: `
-    <div class="container" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
-      <div class="glass-card" style="width: 100%; max-width: 400px; padding: 40px;">
-        <h2 style="text-align: center; margin-bottom: 32px; color: var(--primary);">Yönetici Girişi</h2>
-        
+    <div class="container" style="display: grid; place-items: center; min-height: 62vh;">
+      <div class="card card-pad-lg" style="width: 100%; max-width: 420px;">
+        <div class="center" style="margin-bottom: 28px;">
+          <span class="brand-mark" style="margin: 0 auto 14px; width: 48px; height: 48px; font-size: 1.3rem;">G</span>
+          <h2 style="font-size: 1.7rem; margin-bottom: 6px;">Yönetici Girişi</h2>
+          <p class="muted" style="margin: 0; font-size: .92rem;">İçerikleri yönetmek için giriş yapın.</p>
+        </div>
+
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label class="form-label">Kullanıcı Adı</label>
-            <input type="text" formControlName="username" class="form-control" placeholder="admin" required>
+          <div class="field">
+            <label class="label">Kullanıcı Adı</label>
+            <input type="text" formControlName="username" class="input" placeholder="admin" autocomplete="username" />
           </div>
-          
-          <div class="form-group" style="margin-bottom: 32px;">
-            <label class="form-label">Şifre</label>
-            <input type="password" formControlName="password" class="form-control" placeholder="••••••••" required>
+          <div class="field">
+            <label class="label">Şifre</label>
+            <input type="password" formControlName="password" class="input" placeholder="••••••••" autocomplete="current-password" />
           </div>
-          
-          <div *ngIf="error" style="color: var(--error); margin-bottom: 16px; font-size: 0.95rem; text-align: center; padding: 10px; background-color: rgba(239, 68, 68, 0.1); border-radius: 4px;">
-            {{ error }}
-          </div>
-          
-          <button type="submit" class="btn btn-primary" style="width: 100%;" [disabled]="loginForm.invalid || isLoading">
-            {{ isLoading ? 'Giriş Yapılıyor...' : 'Giriş Yap' }}
+
+          <div *ngIf="error" class="alert alert-err">{{ error }}</div>
+
+          <button type="submit" class="btn btn-primary btn-block" [disabled]="loginForm.invalid || isLoading">
+            {{ isLoading ? 'Giriş yapılıyor…' : 'Giriş Yap' }}
           </button>
         </form>
+
+        <p class="center" style="margin: 22px 0 0;">
+          <a routerLink="/" style="font-size: .9rem;">← Siteye dön</a>
+        </p>
       </div>
     </div>
-  `
+  `,
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  error: string = '';
-  isLoading: boolean = false;
+  error = '';
+  isLoading = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private cdr: ChangeDetectorRef) {
+  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private cdr: ChangeDetectorRef) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required]
+      password: ['', Validators.required],
     });
   }
 
-  onSubmit() {
-    if (this.loginForm.valid) {
-      this.isLoading = true;
-      this.error = '';
-      this.cdr.detectChanges();
-      
-      this.authService.login(this.loginForm.value).subscribe({
-        next: () => {
-          this.router.navigate(['/admin']);
-        },
-        error: (err) => {
-          console.error("Login hatası:", err);
-          this.isLoading = false;
-          this.error = 'Kullanıcı adı veya şifre hatalı.';
-          this.cdr.detectChanges();
-        }
-      });
-    }
+  onSubmit(): void {
+    if (this.loginForm.invalid) return;
+    this.isLoading = true;
+    this.error = '';
+    this.cdr.detectChanges();
+
+    this.auth.login(this.loginForm.value).subscribe({
+      next: () => this.router.navigate(['/yonetim']),
+      error: () => {
+        this.isLoading = false;
+        this.error = 'Kullanıcı adı veya şifre hatalı.';
+        this.cdr.detectChanges();
+      },
+    });
   }
 }

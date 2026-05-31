@@ -1,7 +1,12 @@
+# pyrefly: ignore [untyped-import]
 from django.contrib import admin
+# pyrefly: ignore [untyped-import]
 from django.urls import path, include
+# pyrefly: ignore [untyped-import]
 from django.conf import settings
+# pyrefly: ignore [untyped-import]
 from django.conf.urls.static import static
+# pyrefly: ignore [untyped-import]
 from django.views.generic import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView

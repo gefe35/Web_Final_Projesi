@@ -1,69 +1,121 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { ApiService } from '../services/api.service';
+import { ApiService, AboutMe, ContentItem, SECTIONS } from '../services/api.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <!-- Hero Section -->
-    <div style="padding: 60px 0 100px 0; text-align: center; border-bottom: 1px solid var(--border-color); background: radial-gradient(circle at top, rgba(88, 166, 255, 0.1) 0%, transparent 60%); margin-top: -60px;">
-      <div class="container">
-        <h1 style="font-size: 3.5rem; margin-bottom: 24px; color: #ffffff;">
-          Dijital Dünyanın <br>
-          <span style="color: var(--primary);">Savunma Hattına</span> Hoş Geldiniz.
-        </h1>
-        <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 40px auto; line-height: 1.8;">
-          Siber güvenlik, ağ sistemleri, zafiyet analizleri ve yazılım geliştirme üzerine kişisel notlar, araştırmalar ve projeler.
-        </p>
-        <div style="display: flex; gap: 16px; justify-content: center;">
-          <a routerLink="/kategori/teknik-bilgi" class="btn btn-primary" style="padding: 14px 28px; font-size: 1.1rem;">Teknik Notları Oku</a>
-          <a routerLink="/hakkimda" class="btn btn-outline" style="padding: 14px 28px; font-size: 1.1rem;">Ben Kimim?</a>
+    <!-- Hero -->
+    <section class="container hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Merhaba, ben {{ about?.name_surname || 'Göktuğ Efe' }} 👋</span>
+          <h1>
+            Öğrendiklerimi <span class="hl">paylaştığım</span><br />
+            kişisel köşem.
+          </h1>
+          <p class="lead">
+            {{ about?.profession || 'Siber Güvenlik & Full-Stack Geliştirici' }}.
+            Siber güvenlik, yazılım, araştırmalar, hobiler ve okuduğum kitaplar üzerine
+            notlar tutuyor; öğrendiklerimi burada herkesle paylaşıyorum.
+          </p>
+          <div class="hero-cta">
+            <a routerLink="/teknik-bilgi" class="btn btn-primary">Teknik Yazıları Oku</a>
+            <a routerLink="/hakkimda" class="btn btn-ghost">Ben Kimim?</a>
+          </div>
+        </div>
+
+        <div class="avatar-frame">
+          <span class="blob"></span>
+          <img *ngIf="about?.photo" [src]="about?.photo" alt="{{ about?.name_surname }}" class="avatar-photo" />
+          <div *ngIf="!about?.photo" class="avatar-fallback">{{ initials }}</div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Features / Highlights -->
-    <div class="container" style="margin-top: 60px;">
-      <h2 style="text-align: center; margin-bottom: 40px;">Neler Bulabilirsiniz?</h2>
-      <div class="grid-3">
-        
-        <div class="glass-card" style="text-align: center; padding: 40px 24px;">
-          <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(88, 166, 255, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="3" y1="9" x2="21" y2="9"></line>
-              <line x1="9" y1="21" x2="9" y2="9"></line>
-            </svg>
-          </div>
-          <h3 style="margin-bottom: 16px;">Siber Güvenlik</h3>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">Zafiyet yönetimi, sızma testleri ve savunma mimarileri üzerine araştırmalarım.</p>
-        </div>
-
-        <div class="glass-card" style="text-align: center; padding: 40px 24px;">
-          <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(46, 160, 67, 0.1); color: var(--accent); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-            </svg>
-          </div>
-          <h3 style="margin-bottom: 16px;">Projeler</h3>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">Python, C++ ve donanım bileşenleri ile geliştirdiğim güvenlik projeleri.</p>
-        </div>
-
-        <div class="glass-card" style="text-align: center; padding: 40px 24px;">
-          <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(139, 148, 158, 0.1); color: var(--text-main); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px auto;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-            </svg>
-          </div>
-          <h3 style="margin-bottom: 16px;">Gündelik</h3>
-          <p style="color: var(--text-muted); font-size: 0.95rem;">Okuduğum kitaplar, hobilerim ve teknik olmayan düşüncelerim.</p>
-        </div>
-
+    <!-- Topics -->
+    <section class="container section">
+      <div class="center" style="margin-bottom: 44px;">
+        <span class="eyebrow">Ne paylaşıyorum?</span>
+        <h2 style="margin-top: 10px;">Keşfedebileceğin başlıklar</h2>
       </div>
-    </div>
-  `
+      <div class="grid grid-3">
+        <a *ngFor="let s of sections" [routerLink]="'/' + s.route" class="card card-hover topic-card">
+          <span class="topic-ico" [style.background]="hexA(s.color, 0.14)" [style.color]="s.color">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </span>
+          <h3>{{ s.label }}</h3>
+          <p style="margin: 0;">{{ s.blurb }}</p>
+          <span style="margin-top: 6px; font-weight: 600; color: var(--primary-strong); font-size: .9rem;">İncele →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Latest -->
+    <section class="container section" *ngIf="latest.length">
+      <div style="display: flex; align-items: end; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <span class="eyebrow">Son eklenenler</span>
+          <h2 style="margin-top: 10px;">En yeni yazılar</h2>
+        </div>
+      </div>
+      <div class="grid grid-3">
+        <a *ngFor="let item of latest" [routerLink]="['/icerik', item.slug]" class="card card-hover article-card">
+          <div class="article-thumb" *ngIf="item.image"><img [src]="item.image" [alt]="item.title" /></div>
+          <div class="article-thumb-ph" *ngIf="!item.image" [style.background]="sectionColor(item.category_section)">
+            {{ item.category_name }}
+          </div>
+          <div class="article-body">
+            <span class="tag" [style.color]="sectionColor(item.category_section)" [style.background]="hexA(sectionColor(item.category_section), 0.12)">
+              <span class="tag-dot"></span>{{ item.category_name }}
+            </span>
+            <h3 style="margin-top: 12px;">{{ item.title }}</h3>
+            <p style="font-size: .94rem;">{{ item.summary }}</p>
+            <div class="article-meta">
+              <span>{{ item.created_at | date: 'd MMMM yyyy' }}</span>
+              <span style="color: var(--primary-strong); font-weight: 600;">Oku →</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+  `,
 })
-export class HomeComponent {}
+export class HomeComponent implements OnInit {
+  about?: AboutMe;
+  latest: ContentItem[] = [];
+  sections = SECTIONS;
+
+  constructor(private api: ApiService) {}
+
+  ngOnInit(): void {
+    this.api.getAboutMe().subscribe({ next: (a) => (this.about = a), error: () => {} });
+    this.api.getItems().subscribe({
+      next: (items) => (this.latest = (items || []).slice(0, 3)),
+      error: () => {},
+    });
+  }
+
+  get initials(): string {
+    const n = this.about?.name_surname || 'Göktuğ Efe';
+    return n.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+  }
+
+  sectionColor(key?: string): string {
+    return SECTIONS.find((s) => s.key === key)?.color || '#0f9d8e';
+  }
+
+  hexA(hex: string, a: number): string {
+    const h = hex.replace('#', '');
+    const r = parseInt(h.substring(0, 2), 16);
+    const g = parseInt(h.substring(2, 4), 16);
+    const b = parseInt(h.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
+  }
+}

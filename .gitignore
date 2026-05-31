@@ -40,3 +40,6 @@ node_modules/
 .vscode/
 *.sublime-project
 *.sublime-workspace
+pg_data/
+.env.local
+media/
