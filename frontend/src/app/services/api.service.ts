@@ -67,7 +67,11 @@ export const SECTIONS: SectionDef[] = [
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private readonly baseUrl = 'http://localhost:8000/api';
+  // Replit'te frontend ve backend aynı origin'den çalışır (relative URL)
+  // Geliştirmede localhost:8000 kullanılır
+  private readonly baseUrl = (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+    ? '/api'
+    : 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
 
