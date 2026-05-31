@@ -8,7 +8,6 @@ services:
       POSTGRES_PASSWORD: blogpassword
       POSTGRES_DB: blogdb
     ports:
-      # Host 5433 -> container 5432 (host 5432 may be used by a local Postgres install)
       - "5433:5432"
     volumes:
       - ./pg_data:/var/lib/postgresql/data
@@ -18,12 +17,18 @@ services:
     container_name: blog_pgadmin
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: [ gefe@admin.com ]
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
     ports:
       - "5050:80"
     depends_on:
       - db
+    volumes:
+      - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+      - ./pgadmin/pgpass:/pgpass:ro
+      - pgadmin_data:/var/lib/pgadmin
 
 volumes:
   postgres_data:
+  pgadmin_data:
