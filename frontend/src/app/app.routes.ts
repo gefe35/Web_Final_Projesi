@@ -3,6 +3,7 @@ import { HomeComponent } from './pages/home.component';
 import { AboutComponent } from './pages/about.component';
 import { SectionComponent } from './pages/section.component';
 import { ContentDetailComponent } from './pages/content-detail.component';
+import { ProjectsComponent } from './pages/projects.component';
 import { LoginComponent } from './pages/login.component';
 import { ManagementComponent } from './pages/management.component';
 import { authGuard } from './guards/auth.guard';
@@ -19,6 +20,7 @@ export const routes: Routes = [
   { path: 'kitaplar', component: SectionComponent, data: { section: 'book' }, title: 'Okuduğum Kitaplar' },
 
   { path: 'icerik/:slug', component: ContentDetailComponent },
+  { path: 'projeler', component: ProjectsComponent, title: 'Projeler' },
 
   { path: 'giris', component: LoginComponent, title: 'Giriş' },
   { path: 'yonetim', component: ManagementComponent, canActivate: [authGuard], title: 'Yönetim Paneli' },

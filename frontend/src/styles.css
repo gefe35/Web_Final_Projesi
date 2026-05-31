@@ -277,6 +277,19 @@ img { max-width: 100%; display: block; }
 .footer-links a:hover { color: var(--sun); }
 .footer-copy { font-size: .85rem; color: #8b857a; }
 
+/* ---------- Animations ---------- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.main-content { animation: fadeUp .35s ease both; }
+
+/* ---------- Topic card border-top color passthrough ---------- */
+.topic-card { border-top: 3px solid transparent; }
+
+/* ---------- Projects grid ---------- */
+.project-lang { font-size: .78rem; font-weight: 600; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
   .hero-grid { grid-template-columns: 1fr; gap: 36px; text-align: center; }

@@ -26,6 +26,18 @@ export interface Category {
   created_at?: string;
 }
 
+export interface Project {
+  id: string;
+  name: string;
+  description: string;
+  language: string;
+  github_url: string;
+  stars: number;
+  forks: number;
+  order: number;
+  updated_at: string;
+}
+
 export interface ContentItem {
   id?: string;
   category: string;
@@ -58,6 +70,11 @@ export class ApiService {
   private readonly baseUrl = 'http://localhost:8000/api';
 
   constructor(private http: HttpClient) {}
+
+  // ---------- Projects ----------
+  getProjects(): Observable<Project[]> {
+    return this.http.get<Project[]>(`${this.baseUrl}/projects/`);
+  }
 
   // ---------- About Me ----------
   getAboutMe(): Observable<AboutMe> {

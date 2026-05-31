@@ -9,7 +9,7 @@ import { ApiService, Category, ContentItem, SECTIONS, SectionDef } from '../serv
   imports: [CommonModule, RouterModule],
   template: `
     <div class="container">
-      <header class="center" style="margin-bottom: 36px;">
+      <header style="text-align: center; margin-bottom: 36px;">
         <span class="eyebrow" [style.color]="section?.color">{{ section?.label }}</span>
         <h1 style="margin: 12px 0;">{{ section?.label }}</h1>
         <p class="lead" style="max-width: 620px; margin: 0 auto;">{{ section?.blurb }}</p>
@@ -17,9 +17,14 @@ import { ApiService, Category, ContentItem, SECTIONS, SectionDef } from '../serv
 
       <!-- Kategori filtreleri -->
       <div *ngIf="categories.length" class="seg" style="justify-content: center; margin: 0 auto 36px; display: flex;">
-        <button [class.active]="!activeCat" (click)="filter(null)">Tümü</button>
-        <button *ngFor="let c of categories" [class.active]="activeCat === c.slug" (click)="filter(c.slug!)">
+        <button [class.active]="!activeCat" (click)="filter(null)">
+          Tümü <span style="opacity: .65; font-size:.8em;">({{ items.length }})</span>
+        </button>
+        <button *ngFor="let c of categories"
+                [class.active]="activeCat === c.slug"
+                (click)="filter(c.slug || null)">
           {{ c.name }}
+          <span style="opacity: .65; font-size:.8em;">({{ c.item_count || 0 }})</span>
         </button>
       </div>
 
@@ -27,7 +32,10 @@ import { ApiService, Category, ContentItem, SECTIONS, SectionDef } from '../serv
 
       <div *ngIf="!loading && filtered.length === 0" class="state card">
         <div class="state-ico">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+          </svg>
         </div>
         <h3 style="font-family: var(--font);">Henüz içerik yok</h3>
         <p style="margin: 0;">Bu bölüme yakında yeni yazılar eklenecek.</p>
@@ -36,7 +44,10 @@ import { ApiService, Category, ContentItem, SECTIONS, SectionDef } from '../serv
       <div *ngIf="!loading && filtered.length" class="grid grid-3">
         <a *ngFor="let item of filtered" [routerLink]="['/icerik', item.slug]" class="card card-hover article-card">
           <div class="article-thumb" *ngIf="item.image"><img [src]="item.image" [alt]="item.title" /></div>
-          <div class="article-thumb-ph" *ngIf="!item.image" [style.background]="section?.color">{{ item.category_name }}</div>
+          <div class="article-thumb-ph" *ngIf="!item.image"
+               [style.background]="section?.color" [style.color]="'#fff'">
+            {{ item.category_name }}
+          </div>
           <div class="article-body">
             <span class="tag" [style.color]="section?.color" [style.background]="catBg">
               <span class="tag-dot"></span>{{ item.category_name }}
@@ -45,7 +56,7 @@ import { ApiService, Category, ContentItem, SECTIONS, SectionDef } from '../serv
             <p style="font-size: .94rem;">{{ item.summary }}</p>
             <div class="article-meta">
               <span>{{ item.created_at | date: 'd MMM yyyy' }}</span>
-              <span style="color: var(--primary-strong); font-weight: 600;">Oku →</span>
+              <span [style.color]="section?.color" style="font-weight: 600;">Oku →</span>
             </div>
           </div>
         </a>

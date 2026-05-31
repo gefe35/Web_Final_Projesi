@@ -9,6 +9,7 @@
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Ana Sayfa</a>
       <a routerLink="/hakkimda" routerLinkActive="active">Hakkımda</a>
       <a *ngFor="let s of sections" [routerLink]="'/' + s.route" routerLinkActive="active">{{ s.short }}</a>
+      <a routerLink="/projeler" routerLinkActive="active">Projeler</a>
 
       <ng-container *ngIf="(auth.isLoggedIn() | async); else loggedOut">
         <a routerLink="/yonetim" routerLinkActive="active" class="nav-cta btn btn-primary btn-sm">Yönetim</a>
@@ -40,9 +41,14 @@
       Siber güvenlik ve full-stack geliştirme üzerine öğrendiklerimi paylaştığım kişisel alan.
     </p>
     <div class="footer-links">
+      <a *ngFor="let s of sections" [routerLink]="'/' + s.route">{{ s.short }}</a>
+      <a routerLink="/projeler">Projeler</a>
+      <a routerLink="/hakkimda">Hakkımda</a>
+    </div>
+    <div class="footer-links" style="margin-top: 4px;">
       <a href="https://github.com/gefe35" target="_blank" rel="noopener">GitHub</a>
       <a href="https://www.linkedin.com/in/goktug-efe-m-8b873b306/" target="_blank" rel="noopener">LinkedIn</a>
-      <a routerLink="/giris">Yönetici Girişi</a>
+      <a routerLink="/giris" style="color: var(--muted);">Yönetici Girişi</a>
     </div>
     <p class="footer-copy">&copy; {{ year }} Göktuğ Efe Madran · Tüm hakları saklıdır.</p>
   </div>
