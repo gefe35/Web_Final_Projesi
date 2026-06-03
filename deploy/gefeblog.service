@@ -1,0 +1,22 @@
+[Unit]
+Description=Gefeblog — Django Gunicorn
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/gefeblog/backend
+EnvironmentFile=/opt/gefeblog/backend/.env
+ExecStart=/opt/gefeblog/venv/bin/gunicorn \
+    core.wsgi:application \
+    --bind 127.0.0.1:8000 \
+    --workers 3 \
+    --timeout 120 \
+    --access-logfile /var/log/gefeblog/access.log \
+    --error-logfile  /var/log/gefeblog/error.log
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

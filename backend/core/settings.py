@@ -16,6 +16,10 @@ SECRET_KEY = env('SECRET_KEY', default='django-insecure-)647^z=x((p$m(2x4ply)fes
 DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
 
+# Reverse proxy arkasında gerçek IP ve HTTPS bilgisini al
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
