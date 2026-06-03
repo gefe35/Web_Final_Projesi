@@ -75,6 +75,11 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
+  // ---------- Auth ----------
+  register(data: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/register/`, data);
+  }
+
   // ---------- Projects ----------
   getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.baseUrl}/projects/`);

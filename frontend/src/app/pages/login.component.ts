@@ -34,8 +34,9 @@ import { AuthService } from '../services/auth.service';
           </button>
         </form>
 
-        <p class="center" style="margin: 22px 0 0;">
+        <p class="center" style="margin: 22px 0 0; display: flex; flex-direction: column; gap: 8px;">
           <a routerLink="/" style="font-size: .9rem;">← Siteye dön</a>
+          <a routerLink="/kayit-ol" style="font-size: .9rem; color: var(--primary);">Hesabınız yok mu? Kayıt Olun</a>
         </p>
       </div>
     </div>

@@ -8,6 +8,8 @@ import { LoginComponent } from './pages/login.component';
 import { ManagementComponent } from './pages/management.component';
 import { authGuard } from './guards/auth.guard';
 
+import { RegisterComponent } from './pages/register.component';
+
 export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Göktuğ Efe Madran | Kişisel Blog' },
   { path: 'hakkimda', component: AboutComponent, title: 'Hakkımda' },
@@ -23,6 +25,7 @@ export const routes: Routes = [
   { path: 'projeler', component: ProjectsComponent, title: 'Projeler' },
 
   { path: 'giris', component: LoginComponent, title: 'Giriş' },
+  { path: 'kayit-ol', component: RegisterComponent, title: 'Kayıt Ol' },
   { path: 'yonetim', component: ManagementComponent, canActivate: [authGuard], title: 'Yönetim Paneli' },
 
   // Eski bağlantı yönlendirmeleri

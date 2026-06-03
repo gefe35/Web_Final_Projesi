@@ -3,10 +3,28 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.contrib.auth import get_user_model
 from .models import AboutMe, Project
-from .serializers import AboutMeSerializer, ProjectSerializer
+from .serializers import AboutMeSerializer, ProjectSerializer, RegisterSerializer
 from drf_spectacular.utils import extend_schema
 
+User = get_user_model()
+
+class RegisterView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        operation_id="register_user",
+        summary="Yeni kullanıcı kaydı oluştur",
+        request=RegisterSerializer,
+        responses={201: {"type": "object", "properties": {"message": {"type": "string"}}}}
+    )
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Kayıt başarılı"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProjectListView(APIView):
     permission_classes = [AllowAny]
