@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ApiService, Project } from '../services/api.service';
+import { HttpClient } from '@angular/common/http';
+import { Project } from '../services/api.service';
 
 @Component({
   selector: 'app-projects',
@@ -48,7 +49,7 @@ import { ApiService, Project } from '../services/api.service';
           <p style="font-size: .95rem; flex: 1; margin: 0;">{{ p.description }}</p>
 
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-            <span class="tag" style="background: var(--bg-tint); color: var(--ink-soft);">
+            <span class="tag" style="background: var(--bg-tint); color: var(--ink-soft);" *ngIf="p.language">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/></svg>
               {{ p.language }}
             </span>
@@ -66,12 +67,27 @@ export class ProjectsComponent implements OnInit {
   projects: Project[] = [];
   loading = true;
 
-  constructor(private api: ApiService) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.api.getProjects().subscribe({
-      next: (p) => { this.projects = p; this.loading = false; },
-      error: () => (this.loading = false),
+    this.http.get<any[]>('https://api.github.com/users/gefe35/repos').subscribe({
+      next: (repos) => {
+        this.projects = repos.map((r, i) => ({
+          id: r.id.toString(),
+          name: r.name,
+          description: r.description || 'Açıklama bulunmuyor.',
+          language: r.language || '',
+          github_url: r.html_url,
+          stars: r.stargazers_count,
+          forks: r.forks_count,
+          order: i,
+          updated_at: r.updated_at
+        })).sort((a, b) => b.stars - a.stars);
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 }
