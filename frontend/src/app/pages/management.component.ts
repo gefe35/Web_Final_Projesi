@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService, AboutMe, Category, ContentItem, SECTIONS } from '../services/api.service';
+import { ApiService, AboutMe, Category, ContentItem, Project, SECTIONS } from '../services/api.service';
 import { AuthService } from '../services/auth.service';
 
 interface Tab { key: string; label: string; color: string; isAbout?: boolean; }
@@ -70,8 +70,35 @@ interface Tab { key: string; label: string; color: string; isAbout?: boolean; }
         </div>
       </div>
 
+      <!-- ============ PROJELER ============ -->
+      <div *ngIf="active === 'projects'" class="card card-pad-lg">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+          <div>
+            <h2 style="font-size: 1.5rem; margin-bottom: 4px;">Projeler</h2>
+            <p class="muted" style="margin: 0;">Projelerini ekle, düzenle veya sil.</p>
+          </div>
+          <button class="btn btn-accent btn-sm" (click)="openProjectModal()">+ Yeni Proje</button>
+        </div>
+
+        <div *ngIf="projectsLoading" class="state"><div class="spinner"></div></div>
+
+        <div *ngIf="!projectsLoading && !projectsList.length" class="muted" style="font-size: .9rem; padding: 8px 0;">Henüz proje eklenmemiş.</div>
+
+        <div *ngFor="let p of projectsList" class="row-item">
+          <div style="min-width: 0;">
+            <strong style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ p.name }}</strong>
+            <span class="muted" style="font-size: .82rem;">{{ p.language || 'Dil belirtilmemiş' }} · ⭐ {{ p.stars }} · 🍴 {{ p.forks }}</span>
+          </div>
+          <div style="display: flex; gap: 6px; flex-shrink: 0;">
+            <a *ngIf="p.github_url" [href]="p.github_url" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">GitHub ↗</a>
+            <button class="btn btn-ghost btn-sm" (click)="openProjectModal(p)">Düzenle</button>
+            <button class="btn btn-danger btn-sm" (click)="removeProject(p)">Sil</button>
+          </div>
+        </div>
+      </div>
+
       <!-- ============ İÇERİK BÖLÜMLERİ ============ -->
-      <div *ngIf="active !== 'about'">
+      <div *ngIf="active !== 'about' && active !== 'projects'">
         <div class="grid" style="grid-template-columns: 340px 1fr; gap: 26px; align-items: start;">
 
           <!-- Kategoriler -->
@@ -176,11 +203,45 @@ interface Tab { key: string; label: string; color: string; isAbout?: boolean; }
         </div>
       </div>
     </div>
+
+    <!-- ============ PROJE MODAL ============ -->
+    <div *ngIf="showProjectModal" class="modal-backdrop" (click)="closeProjectModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <h2 style="font-size: 1.4rem; margin-bottom: 22px;">{{ isNewProject ? 'Yeni Proje' : 'Projeyi Düzenle' }}</h2>
+
+        <div class="field"><label class="label">Proje Adı <span class="req">*</span></label>
+          <input class="input" [(ngModel)]="projectForm.name" placeholder="Proje adı" /></div>
+        <div class="field"><label class="label">Açıklama <span class="req">*</span></label>
+          <textarea class="textarea" rows="3" [(ngModel)]="projectForm.description" placeholder="Proje hakkında kısa açıklama"></textarea></div>
+        <div class="grid grid-2" style="gap: 20px;">
+          <div class="field"><label class="label">Programlama Dili</label>
+            <input class="input" [(ngModel)]="projectForm.language" placeholder="Python, JavaScript, vb." /></div>
+          <div class="field"><label class="label">Sıra</label>
+            <input class="input" type="number" [(ngModel)]="projectForm.order" /></div>
+        </div>
+        <div class="field"><label class="label">GitHub URL</label>
+          <input class="input" [(ngModel)]="projectForm.github_url" placeholder="https://github.com/..." /></div>
+        <div class="grid grid-2" style="gap: 20px;">
+          <div class="field"><label class="label">Yıldız</label>
+            <input class="input" type="number" [(ngModel)]="projectForm.stars" /></div>
+          <div class="field"><label class="label">Fork</label>
+            <input class="input" type="number" [(ngModel)]="projectForm.forks" /></div>
+        </div>
+
+        <div *ngIf="projectModalError" class="alert alert-err">{{ projectModalError }}</div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+          <button class="btn btn-ghost" (click)="closeProjectModal()">İptal</button>
+          <button class="btn btn-primary" (click)="saveProject()" [disabled]="saving">{{ saving ? 'Kaydediliyor…' : 'Kaydet' }}</button>
+        </div>
+      </div>
+    </div>
   `,
 })
 export class ManagementComponent implements OnInit {
   tabs: Tab[] = [
     { key: 'about', label: 'Hakkımda', color: '#0f9d8e', isAbout: true },
+    { key: 'projects', label: 'Projeler', color: '#2d6a4f' },
     ...SECTIONS.map((s) => ({ key: s.key, label: s.label, color: s.color })),
   ];
   active = 'about';
@@ -210,6 +271,14 @@ export class ManagementComponent implements OnInit {
   itemImagePreview: string | null = null;
   modalError = '';
 
+  // Projects
+  projectsList: Project[] = [];
+  projectsLoading = false;
+  showProjectModal = false;
+  isNewProject = true;
+  projectForm: Partial<Project> = {};
+  projectModalError = '';
+
   constructor(private api: ApiService, public auth: AuthService, private router: Router) {}
 
   ngOnInit(): void {
@@ -220,6 +289,7 @@ export class ManagementComponent implements OnInit {
     this.active = key;
     this.clearMessage();
     if (key === 'about') { if (!this.about) this.loadAbout(); }
+    else if (key === 'projects') { this.loadProjects(); }
     else this.loadSection(key);
   }
 
@@ -328,6 +398,57 @@ export class ManagementComponent implements OnInit {
     });
   }
   closeModal(): void { this.showModal = false; }
+
+  // ---------- Projects ----------
+  loadProjects(): void {
+    this.projectsLoading = true;
+    this.api.getProjects().subscribe({
+      next: (p) => { this.projectsList = p; this.projectsLoading = false; },
+      error: () => { this.projectsLoading = false; this.flash('Projeler yüklenemedi.', true); },
+    });
+  }
+  openProjectModal(project?: Project): void {
+    this.projectModalError = '';
+    if (project) {
+      this.isNewProject = false;
+      this.projectForm = { ...project };
+    } else {
+      this.isNewProject = true;
+      this.projectForm = { name: '', description: '', language: '', github_url: '', stars: 0, forks: 0, order: this.projectsList.length };
+    }
+    this.showProjectModal = true;
+  }
+  closeProjectModal(): void { this.showProjectModal = false; }
+  saveProject(): void {
+    if (!this.projectForm.name?.trim() || !this.projectForm.description?.trim()) {
+      this.projectModalError = 'Proje adı ve açıklama zorunludur.';
+      return;
+    }
+    this.saving = true;
+    const payload: Partial<Project> = {
+      name: this.projectForm.name,
+      description: this.projectForm.description,
+      language: this.projectForm.language || '',
+      github_url: this.projectForm.github_url || '',
+      stars: this.projectForm.stars || 0,
+      forks: this.projectForm.forks || 0,
+      order: this.projectForm.order || 0,
+    };
+    const req = this.isNewProject
+      ? this.api.createProject(payload)
+      : this.api.updateProject(this.projectForm.id!, payload);
+    req.subscribe({
+      next: () => { this.saving = false; this.closeProjectModal(); this.loadProjects(); this.flash(this.isNewProject ? 'Proje eklendi.' : 'Proje güncellendi.'); },
+      error: (err) => { this.saving = false; this.projectModalError = this.errText(err); },
+    });
+  }
+  removeProject(p: Project): void {
+    if (!confirm(`"${p.name}" projesi silinecek. Emin misin?`)) return;
+    this.api.deleteProject(p.id).subscribe({
+      next: () => { this.loadProjects(); this.flash('Proje silindi.'); },
+      error: (err) => this.flash(this.errText(err), true),
+    });
+  }
 
   // ---------- helpers ----------
   logout(): void { this.auth.logout(); this.router.navigate(['/']); }

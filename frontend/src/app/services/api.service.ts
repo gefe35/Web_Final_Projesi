@@ -84,6 +84,15 @@ export class ApiService {
   getProjects(): Observable<Project[]> {
     return this.http.get<Project[]>(`${this.baseUrl}/projects/`);
   }
+  createProject(data: Partial<Project>): Observable<Project> {
+    return this.http.post<Project>(`${this.baseUrl}/projects/`, data);
+  }
+  updateProject(id: string, data: Partial<Project>): Observable<Project> {
+    return this.http.put<Project>(`${this.baseUrl}/projects/${id}/`, data);
+  }
+  deleteProject(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/projects/${id}/`);
+  }
 
   // ---------- About Me ----------
   getAboutMe(): Observable<AboutMe> {

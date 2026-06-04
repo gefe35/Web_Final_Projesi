@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth import get_user_model
 from .models import AboutMe, Project
@@ -37,6 +37,58 @@ class ProjectListView(APIView):
     def get(self, request):
         projects = Project.objects.filter(is_active=True)
         return Response(ProjectSerializer(projects, many=True).data)
+
+    @extend_schema(
+        operation_id="create_project",
+        summary="Yeni proje oluştur",
+        request=ProjectSerializer,
+        responses={201: ProjectSerializer}
+    )
+    def post(self, request):
+        if not request.user or not request.user.is_authenticated:
+            return Response({"detail": "Yetkilendirme gerekli."}, status=status.HTTP_401_UNAUTHORIZED)
+        serializer = ProjectSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ProjectDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return Project.objects.get(pk=pk)
+        except Project.DoesNotExist:
+            return None
+
+    @extend_schema(
+        operation_id="update_project",
+        summary="Projeyi güncelle",
+        request=ProjectSerializer,
+        responses={200: ProjectSerializer}
+    )
+    def put(self, request, pk):
+        project = self.get_object(pk)
+        if not project:
+            return Response({"detail": "Proje bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ProjectSerializer(project, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        operation_id="delete_project",
+        summary="Projeyi sil"
+    )
+    def delete(self, request, pk):
+        project = self.get_object(pk)
+        if not project:
+            return Response({"detail": "Proje bulunamadı."}, status=status.HTTP_404_NOT_FOUND)
+        project.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AboutMeView(APIView):
@@ -85,3 +137,4 @@ class AboutMeView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
