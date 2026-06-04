@@ -42,3 +42,21 @@ class AboutMe(models.Model):
 
     def __str__(self):
         return self.name_surname
+
+
+class ContactMessage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, verbose_name="Ad Soyad")
+    email = models.EmailField(verbose_name="E-posta")
+    subject = models.CharField(max_length=200, verbose_name="Konu")
+    message = models.TextField(verbose_name="Mesaj")
+    is_read = models.BooleanField(default=False, verbose_name="Okundu")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Gönderilme Tarihi")
+
+    class Meta:
+        verbose_name = "İletişim Mesajı"
+        verbose_name_plural = "İletişim Mesajları"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name} — {self.subject}"

@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth import get_user_model
-from .models import AboutMe, Project
-from .serializers import AboutMeSerializer, ProjectSerializer, RegisterSerializer
+from .models import AboutMe, Project, ContactMessage
+from .serializers import AboutMeSerializer, ProjectSerializer, RegisterSerializer, ContactMessageSerializer
 from drf_spectacular.utils import extend_schema
 
 User = get_user_model()
@@ -138,3 +138,30 @@ class AboutMeView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class ContactMessageView(APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        operation_id="send_contact_message",
+        summary="İletişim formu mesajı gönder",
+        request=ContactMessageSerializer,
+        responses={201: ContactMessageSerializer}
+    )
+    def post(self, request):
+        serializer = ContactMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        operation_id="list_contact_messages",
+        summary="İletişim mesajlarını listele",
+        responses={200: ContactMessageSerializer(many=True)}
+    )
+    def get(self, request):
+        if not request.user or not request.user.is_authenticated:
+            return Response({"detail": "Yetkilendirme gerekli."}, status=status.HTTP_401_UNAUTHORIZED)
+        messages = ContactMessage.objects.all()
+        return Response(ContactMessageSerializer(messages, many=True).data)

@@ -55,6 +55,16 @@ export interface ContentItem {
   updated_at?: string;
 }
 
+export interface ContactMessage {
+  id?: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  is_read?: boolean;
+  created_at?: string;
+}
+
 /** Değerlendirme kriterindeki bölümler */
 export interface SectionDef { key: string; label: string; short: string; route: string; color: string; blurb: string; }
 export const SECTIONS: SectionDef[] = [
@@ -152,5 +162,13 @@ export class ApiService {
     });
     if (image) form.append('image', image);
     return form;
+  }
+
+  // ---------- Contact ----------
+  sendContactMessage(data: { name: string; email: string; subject: string; message: string }): Observable<ContactMessage> {
+    return this.http.post<ContactMessage>(`${this.baseUrl}/contact/`, data);
+  }
+  getContactMessages(): Observable<ContactMessage[]> {
+    return this.http.get<ContactMessage[]>(`${this.baseUrl}/contact/`);
   }
 }

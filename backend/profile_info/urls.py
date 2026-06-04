@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import AboutMeView, ProjectListView, ProjectDetailView, RegisterView
+from .views import AboutMeView, ProjectListView, ProjectDetailView, RegisterView, ContactMessageView
 
 app_name = 'profile_info'
 
@@ -8,5 +8,5 @@ urlpatterns = [
     path('projects/', ProjectListView.as_view(), name='projects'),
     path('projects/<uuid:pk>/', ProjectDetailView.as_view(), name='project-detail'),
     path('register/', RegisterView.as_view(), name='register'),
+    path('contact/', ContactMessageView.as_view(), name='contact'),
 ]
-

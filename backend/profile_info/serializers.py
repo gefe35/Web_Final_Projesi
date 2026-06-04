@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from .models import AboutMe, Project
+from .models import AboutMe, Project, ContactMessage
 
 User = get_user_model()
 
@@ -40,3 +40,10 @@ class AboutMeSerializer(serializers.ModelSerializer):
             'photo', 'updated_at'
         ]
         read_only_fields = ['id', 'updated_at']
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = ['id', 'name', 'email', 'subject', 'message', 'is_read', 'created_at']
+        read_only_fields = ['id', 'is_read', 'created_at']
