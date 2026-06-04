@@ -32,11 +32,15 @@ import { AuthService } from '../services/auth.service';
           <button type="submit" class="btn btn-primary btn-block" [disabled]="loginForm.invalid || isLoading">
             {{ isLoading ? 'Giriş yapılıyor…' : 'Giriş Yap' }}
           </button>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+            <button type="button" class="btn btn-ghost btn-block" routerLink="/kayit-ol">Kayıt Ol</button>
+            <button type="button" class="btn btn-ghost btn-block" (click)="forgotPassword()">Şifremi Unuttum</button>
+          </div>
         </form>
 
         <p class="center" style="margin: 22px 0 0; display: flex; flex-direction: column; gap: 8px;">
           <a routerLink="/" style="font-size: .9rem;">← Siteye dön</a>
-          <a routerLink="/kayit-ol" style="font-size: .9rem; color: var(--primary);">Hesabınız yok mu? Kayıt Olun</a>
         </p>
       </div>
     </div>
@@ -68,5 +72,9 @@ export class LoginComponent {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  forgotPassword(): void {
+    alert('Şifre sıfırlama özelliği yakında eklenecektir.');
   }
 }
